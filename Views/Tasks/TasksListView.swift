@@ -203,7 +203,14 @@ struct TaskRow: View {
                 .fill(Color(.systemBackground))
         )
         .contentShape(Rectangle())
+        .onTapGesture {
+            // Quick tap only works to deselect when already selected
+            if isSelected {
+                onTap()
+            }
+        }
         .onLongPressGesture(minimumDuration: 0.5) {
+            // Long press to select/toggle
             onTap()
         }
     }
