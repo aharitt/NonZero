@@ -170,4 +170,85 @@ class StatsViewModel {
     func getTotalLoggedDays(for task: Task) -> Int {
         return task.entries.count
     }
+
+    // Get recovery ratio - percentage of times user returned the next day after a zero day
+    func getRecoveryRatio(for task: Task) -> Double {
+        let calendar = Calendar.current
+        let sortedEntries = task.entries.sorted { $0.date < $1.date }
+        guard !sortedEntries.isEmpty else { return 0.0 }
+
+        var zeroDays = 0
+        var nextDayReturns = 0
+        var previousDate: Date?
+        var previousWasZero = false
+
+        for entry in sortedEntries {
+            if let prevDate = previousDate {
+                let daysDiff = calendar.dateComponents([.day], from: prevDate, to: entry.date).day ?? 0
+
+                // Check if previous day was a zero day (either no entry or didn't meet minimum)
+                if previousWasZero && daysDiff == 1 && entry.isNonZero {
+                    // User returned the next day after a zero day
+                    nextDayReturns += 1
+                }
+            }
+
+            // Track if current day is a zero day
+            if !entry.isNonZero {
+                previousWasZero = true
+                zeroDays += 1
+            } else {
+                previousWasZero = false
+            }
+
+            previousDate = entry.date
+        }
+
+        // Check for gaps (days with no entries) as zero days
+        if let firstEntry = sortedEntries.first, let lastEntry = sortedEntries.last {
+            let totalDays = calendar.dateComponents([.day], from: firstEntry.date, to: lastEntry.date).day ?? 0
+            let loggedDays = sortedEntries.count
+            let gapDays = totalDays - loggedDays + 1
+            if gapDays > 0 {
+                zeroDays += gapDays
+            }
+        }
+
+        guard zeroDays > 0 else { return 0.0 }
+        return Double(nextDayReturns) / Double(zeroDays)
+    }
+
+    // Get days returned after miss - total non-zero days that came after a zero day
+    func getDaysReturnedAfterMiss(for task: Task) -> Int {
+        let calendar = Calendar.current
+        let sortedEntries = task.entries.sorted { $0.date < $1.date }
+        guard !sortedEntries.isEmpty else { return 0 }
+
+        var daysAfterMiss = 0
+        var previousDate: Date?
+        var hadMiss = false
+
+        for entry in sortedEntries {
+            if let prevDate = previousDate {
+                let daysDiff = calendar.dateComponents([.day], from: prevDate, to: entry.date).day ?? 0
+
+                // Check if there was a gap or a zero entry
+                if daysDiff > 1 {
+                    hadMiss = true
+                }
+            }
+
+            // If current entry is non-zero and we had a miss before, count it
+            if entry.isNonZero && hadMiss {
+                daysAfterMiss += 1
+                hadMiss = false // Reset after counting
+            } else if !entry.isNonZero {
+                hadMiss = true // Mark as having a miss
+            }
+
+            previousDate = entry.date
+        }
+
+        return daysAfterMiss
+    }
 }

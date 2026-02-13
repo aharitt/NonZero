@@ -7,22 +7,44 @@ struct TodayView: View {
     @State private var viewModel = TodayViewModel()
     @State private var timerManager = TimerManager.shared
     @State private var currentPage = 0
+    @State private var tasksPerPage: Int = 6 // Default value, will be calculated dynamically
+    @State private var availableHeight: CGFloat = 0
 
     var todayDate: String {
         Date().formatted(date: .abbreviated, time: .omitted)
     }
 
-    // Split tasks into pages of 6
+    // Split tasks into pages based on dynamically calculated count
     var taskPages: [[Task]] {
-        let tasksPerPage = 6
         return stride(from: 0, to: viewModel.tasks.count, by: tasksPerPage).map {
             Array(viewModel.tasks[$0..<min($0 + tasksPerPage, viewModel.tasks.count)])
         }
     }
 
+    private func calculateTasksPerPage(height: CGFloat) {
+        // Only recalculate if height has changed significantly (avoid flickering)
+        guard abs(height - availableHeight) > 10 else { return }
+        availableHeight = height
+
+        // TodayTaskCard: ~78 points (card) + ~10 points (padding/spacing) = ~88 points total
+        // Account for padding, spacing between cards, and page indicator
+        let estimatedCardHeight: CGFloat = 88
+        let pageIndicatorSpace: CGFloat = 30
+        let verticalPadding: CGFloat = 32  // .padding(.vertical) adds ~16 top + 16 bottom
+        let usableHeight = height - pageIndicatorSpace - verticalPadding
+        let calculated = Int(usableHeight / estimatedCardHeight)
+        let newTasksPerPage = max(4, min(15, calculated))
+
+        // Only update if it actually changed
+        if tasksPerPage != newTasksPerPage {
+            tasksPerPage = newTasksPerPage
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
                 if viewModel.tasks.isEmpty {
                     ContentUnavailableView(
                         "No Tasks Yet",
@@ -66,6 +88,21 @@ struct TodayView: View {
                     .tabViewStyle(.page(indexDisplayMode: taskPages.count > 1 ? .always : .never))
                     .indexViewStyle(.page(backgroundDisplayMode: .always))
                 }
+                }
+                .onAppear {
+                    // Load data once when view appears
+                    if viewModel.tasks.isEmpty {
+                        viewModel.loadData()
+                    }
+                }
+                .onChange(of: geometry.size) { oldSize, newSize in
+                    // Recalculate when geometry changes
+                    calculateTasksPerPage(height: newSize.height)
+                }
+                .task {
+                    // Initial calculation
+                    calculateTasksPerPage(height: geometry.size.height)
+                }
             }
             .navigationTitle("Today - \(todayDate)")
             .navigationBarTitleDisplayMode(.inline)
@@ -80,9 +117,6 @@ struct TodayView: View {
                     }
                 }
             })
-            .onAppear {
-                viewModel.loadData()
-            }
             .refreshable {
                 await viewModel.syncHealthKitData()
             }
@@ -190,27 +224,12 @@ struct TodayTaskCard: View {
                         }
                     }
 
-                case .duration:
-                    ForEach([5.0, 15.0, 30.0], id: \.self) { minutes in
-                        Button {
-                            onQuickAction(currentValue + minutes)
-                        } label: {
-                            Text("+\(Int(minutes))m")
-                                .font(.caption)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 8)
-                                .background(Color.blue.opacity(0.1))
-                                .foregroundColor(.blue)
-                                .cornerRadius(6)
-                        }
-                    }
-
-                case .timer:
+                case .time:
                     if isTimerRunning {
-                        // Show elapsed time and stop button
+                        // Timer is running - show elapsed time and stop button
                         HStack(spacing: 6) {
                             Text(timerElapsedTime)
-                                .font(.system(.body, design: .monospaced))
+                                .font(.system(.caption, design: .monospaced))
                                 .fontWeight(.semibold)
                                 .foregroundColor(.green)
                                 .frame(maxWidth: .infinity)
@@ -221,35 +240,45 @@ struct TodayTaskCard: View {
                             Button {
                                 onStopTimer()
                             } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "stop.fill")
-                                        .font(.caption)
-                                    Text("Stop")
-                                        .font(.caption)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 8)
-                                .background(Color.red.opacity(0.1))
-                                .foregroundColor(.red)
-                                .cornerRadius(6)
+                                Image(systemName: "stop.fill")
+                                    .font(.caption)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                    .background(Color.red.opacity(0.1))
+                                    .foregroundColor(.red)
+                                    .cornerRadius(6)
                             }
                         }
                     } else {
-                        // Show start button
-                        Button {
-                            onStartTimer()
-                        } label: {
-                            HStack(spacing: 4) {
+                        // Timer is not running - show manual entry buttons and start button
+                        HStack(spacing: 6) {
+                            // Manual entry buttons
+                            ForEach([5.0, 15.0, 30.0], id: \.self) { minutes in
+                                Button {
+                                    onQuickAction(currentValue + minutes)
+                                } label: {
+                                    Text("+\(Int(minutes))m")
+                                        .font(.caption)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 8)
+                                        .background(Color.blue.opacity(0.1))
+                                        .foregroundColor(.blue)
+                                        .cornerRadius(6)
+                                }
+                            }
+
+                            // Start timer button
+                            Button {
+                                onStartTimer()
+                            } label: {
                                 Image(systemName: "play.fill")
                                     .font(.caption)
-                                Text("Start")
-                                    .font(.caption)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                    .background(Color.green.opacity(0.1))
+                                    .foregroundColor(.green)
+                                    .cornerRadius(6)
                             }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                            .background(Color.green.opacity(0.1))
-                            .foregroundColor(.green)
-                            .cornerRadius(6)
                         }
                     }
                 }

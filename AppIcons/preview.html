@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NonZero App Icons Preview</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            background: #f5f5f7;
+        }
+        h1 {
+            text-align: center;
+            color: #1d1d1f;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6e6e73;
+            margin-bottom: 40px;
+        }
+        .icons-container {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .icon-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            flex: 1;
+            min-width: 300px;
+            max-width: 450px;
+        }
+        .icon-preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 20px;
+        }
+        .icon-size {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .icon-size img {
+            border-radius: 22.5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        .size-label {
+            font-size: 12px;
+            color: #6e6e73;
+            font-weight: 500;
+        }
+        h2 {
+            color: #1d1d1f;
+            margin-bottom: 10px;
+        }
+        .description {
+            color: #6e6e73;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .instructions {
+            background: #f5f5f7;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 40px;
+            text-align: left;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #1d1d1f;
+        }
+        .instructions code {
+            background: #e8e8ed;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+        }
+        .instructions ol {
+            color: #1d1d1f;
+            line-height: 1.8;
+        }
+        .usage {
+            background: #e8f5e9;
+            border-left: 4px solid #34C759;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        .usage strong {
+            color: #1d1d1f;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 NonZero App Icons</h1>
+    <p class="subtitle">Dynamic app icons that change based on your daily progress</p>
+
+    <div class="icons-container">
+        <!-- Zero Icon -->
+        <div class="icon-card">
+            <h2>😔 Zero Icon (Default)</h2>
+            <p class="description">Gloomy, sad appearance when no tasks are completed</p>
+            <div class="icon-preview">
+                <div class="icon-size">
+                    <img src="AppIconZero.svg" width="180" height="180" alt="Zero Icon @3x">
+                    <span class="size-label">180×180 (@3x)</span>
+                </div>
+                <div class="icon-size">
+                    <img src="AppIconZero.svg" width="120" height="120" alt="Zero Icon @2x">
+                    <span class="size-label">120×120 (@2x)</span>
+                </div>
+                <div class="icon-size">
+                    <img src="AppIconZero.svg" width="60" height="60" alt="Zero Icon @1x">
+                    <span class="size-label">60×60 (@1x)</span>
+                </div>
+            </div>
+            <div class="usage">
+                <strong>When shown:</strong> 0-19% of tasks completed
+            </div>
+        </div>
+
+        <!-- Non-Zero Icon -->
+        <div class="icon-card">
+            <h2>😊 Non-Zero Icon</h2>
+            <p class="description">Bright, happy appearance when tasks are being completed</p>
+            <div class="icon-preview">
+                <div class="icon-size">
+                    <img src="AppIconNonZero.svg" width="180" height="180" alt="Non-Zero Icon @3x">
+                    <span class="size-label">180×180 (@3x)</span>
+                </div>
+                <div class="icon-size">
+                    <img src="AppIconNonZero.svg" width="120" height="120" alt="Non-Zero Icon @2x">
+                    <span class="size-label">120×120 (@2x)</span>
+                </div>
+                <div class="icon-size">
+                    <img src="AppIconNonZero.svg" width="60" height="60" alt="Non-Zero Icon @1x">
+                    <span class="size-label">60×60 (@1x)</span>
+                </div>
+            </div>
+            <div class="usage">
+                <strong>When shown:</strong> 20%+ of tasks completed
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>📦 How to Convert to PNG for Xcode</h3>
+        <ol>
+            <li>Open this folder in Terminal: <code>cd "AppIcons"</code></li>
+            <li>Run the conversion script (see convert.sh)</li>
+            <li>The script will generate PNG files at the required sizes</li>
+            <li>Add the PNG files to your Xcode project</li>
+        </ol>
+
+        <h3>✨ Icon Features</h3>
+        <ul>
+            <li><strong>Zero Icon:</strong> Gray/blue gloomy colors (#6B7280), sad face, "0" badge</li>
+            <li><strong>Non-Zero Icon:</strong> Bright green (#34C759), happy smile, checkmark badge</li>
+            <li><strong>Design:</strong> Simple, clean, recognizable at all sizes</li>
+            <li><strong>Format:</strong> SVG → converts to PNG at 120×120 and 180×180</li>
+        </ul>
+
+        <h3>🔄 Next Steps</h3>
+        <ol>
+            <li>Review the preview above</li>
+            <li>Run <code>./convert.sh</code> to generate PNG files</li>
+            <li>Follow instructions in <code>DYNAMIC_ICON_SETUP.md</code></li>
+        </ol>
+    </div>
+</body>
+</html>

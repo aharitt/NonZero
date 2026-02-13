@@ -38,6 +38,9 @@
 		C1AFD9302F3BD9B10090C36E /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD92F2F3BD9B10090C36E /* SoundManager.swift */; };
 		C1AFD9322F3BE7EB0090C36E /* ReorderTasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9312F3BE7EB0090C36E /* ReorderTasksView.swift */; };
 		C1AFD9342F3E441C0090C36E /* PastEntryEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9332F3E441C0090C36E /* PastEntryEditorSheet.swift */; };
+		C1AFD9362F3E654F0090C36E /* TaskSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9352F3E654F0090C36E /* TaskSchema.swift */; };
+		C1AFD9392F3EF5000090C36E /* AppIconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9382F3EF5000090C36E /* AppIconManager.swift */; };
+		C1AFD93B2F3EF50F0090C36E /* DeviceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD93A2F3EF50F0090C36E /* DeviceHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +77,10 @@
 		C1AFD92F2F3BD9B10090C36E /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		C1AFD9312F3BE7EB0090C36E /* ReorderTasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReorderTasksView.swift; sourceTree = "<group>"; };
 		C1AFD9332F3E441C0090C36E /* PastEntryEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastEntryEditorSheet.swift; sourceTree = "<group>"; };
+		C1AFD9352F3E654F0090C36E /* TaskSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSchema.swift; sourceTree = "<group>"; };
+		C1AFD9382F3EF5000090C36E /* AppIconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconManager.swift; sourceTree = "<group>"; };
+		C1AFD93A2F3EF50F0090C36E /* DeviceHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHelper.swift; sourceTree = "<group>"; };
+		C1AFD93C2F3EF5210090C36E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +97,7 @@
 		C10245C92F3A887600C417EA = {
 			isa = PBXGroup;
 			children = (
+				C1AFD93C2F3EF5210090C36E /* Info.plist */,
 				C1AFD9262F3B8B940090C36E /* Assets.xcassets */,
 				C1AFD91F2F3AA2CD0090C36E /* NonZero.entitlements */,
 				C10245E12F3A890600C417EA /* App */,
@@ -136,6 +144,7 @@
 		C10245E82F3A890600C417EA /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C1AFD9352F3E654F0090C36E /* TaskSchema.swift */,
 				C10245E62F3A890600C417EA /* Entry.swift */,
 				C10245E72F3A890600C417EA /* Task.swift */,
 			);
@@ -145,6 +154,8 @@
 		C10245ED2F3A890600C417EA /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				C1AFD93A2F3EF50F0090C36E /* DeviceHelper.swift */,
+				C1AFD9382F3EF5000090C36E /* AppIconManager.swift */,
 				C1AFD92F2F3BD9B10090C36E /* SoundManager.swift */,
 				C1AFD9242F3B8AB60090C36E /* AppBadgeManager.swift */,
 				C10245EB2F3A890600C417EA /* DateHelpers.swift */,
@@ -304,6 +315,7 @@
 				C10246012F3A890700C417EA /* DataStore.swift in Sources */,
 				C1AFD9212F3AA80C0090C36E /* HealthKitManager.swift in Sources */,
 				C10246022F3A890700C417EA /* NonZeroApp.swift in Sources */,
+				C1AFD93B2F3EF50F0090C36E /* DeviceHelper.swift in Sources */,
 				C1AFD92B2F3BD9890090C36E /* SettingsManager.swift in Sources */,
 				C10246032F3A890700C417EA /* DateHelpers.swift in Sources */,
 				C1AFD92E2F3BD99B0090C36E /* SettingsView.swift in Sources */,
@@ -311,11 +323,13 @@
 				C10246052F3A890700C417EA /* CalendarHeatmapView.swift in Sources */,
 				C10246062F3A890700C417EA /* TasksListView.swift in Sources */,
 				C1AFD9322F3BE7EB0090C36E /* ReorderTasksView.swift in Sources */,
+				C1AFD9392F3EF5000090C36E /* AppIconManager.swift in Sources */,
 				C10246072F3A890700C417EA /* TaskEditorView.swift in Sources */,
 				C1AFD9302F3BD9B10090C36E /* SoundManager.swift in Sources */,
 				C10246082F3A890700C417EA /* SeedData.swift in Sources */,
 				C10246092F3A890700C417EA /* NonZeroBadge.swift in Sources */,
 				C1AFD9342F3E441C0090C36E /* PastEntryEditorSheet.swift in Sources */,
+				C1AFD9362F3E654F0090C36E /* TaskSchema.swift in Sources */,
 				C102460A2F3A890700C417EA /* StatsView.swift in Sources */,
 				C102460B2F3A890700C417EA /* TaskDetailView.swift in Sources */,
 				C102460C2F3A890700C417EA /* StatsViewModel.swift in Sources */,
@@ -457,11 +471,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NonZero.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "NonZero needs access to your workout data to automatically track exercise time";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "NonZero needs to read your workout data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -473,9 +489,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aharitt.NonZero;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -492,11 +509,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NonZero.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "NonZero needs access to your workout data to automatically track exercise time";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "NonZero needs to read your workout data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -508,9 +527,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.anothereye.NonZero;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;

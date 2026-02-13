@@ -20,7 +20,7 @@ class TasksViewModel {
         tasks = dataStore.fetchTasks(includeArchived: false)
     }
 
-    func addTask(name: String, type: TaskType, minimum: Double, goal: Double?, unit: String?, healthKitWorkout: String?, icon: String?) {
+    func addTask(name: String, type: TaskType, minimum: Double, goal: Double?, unit: String?, healthKitWorkout: String?, pushFitPro: Bool, icon: String?) {
         // Calculate next sort order
         let maxSortOrder = tasks.map(\.sortOrder).max() ?? 0
 
@@ -31,6 +31,7 @@ class TasksViewModel {
             goalValue: goal,
             unit: unit,
             healthKitWorkoutType: healthKitWorkout,
+            pushFitProEnabled: pushFitPro,
             icon: icon,
             sortOrder: maxSortOrder + 1
         )
@@ -38,13 +39,14 @@ class TasksViewModel {
         loadTasks()
     }
 
-    func updateTask(_ task: Task, name: String, type: TaskType, minimum: Double, goal: Double?, unit: String?, healthKitWorkout: String?, icon: String?) {
+    func updateTask(_ task: Task, name: String, type: TaskType, minimum: Double, goal: Double?, unit: String?, healthKitWorkout: String?, pushFitPro: Bool, icon: String?) {
         task.name = name
         task.taskType = type
         task.minimumValue = minimum
         task.goalValue = goal
         task.unit = unit
         task.healthKitWorkoutType = healthKitWorkout
+        task.pushFitProEnabled = pushFitPro
         task.icon = icon
 
         if let context = dataStore.context {

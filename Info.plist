@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- App Icon Configuration for Dynamic Icons -->
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>AppIconNonZero</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>AppIconNonZero</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+		</dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon</string>
+			</array>
+		</dict>
+	</dict>
+
+	<!-- Permission description for icon changes -->
+	<key>NSIconChangePermission</key>
+	<string>NonZero updates its app icon based on your daily progress to keep you motivated!</string>
+
+	<!-- Required privacy descriptions -->
+	<key>NSHealthShareUsageDescription</key>
+	<string>NonZero can sync workout data from Apple Health to automatically track your time-based tasks like running or yoga.</string>
+
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>NonZero needs permission to read workout data from Apple Health.</string>
+
+	<!-- App capabilities -->
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+
+	<!-- Supported interface orientations -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
+
+	<!-- Scene configuration (for SwiftUI) -->
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+	</dict>
+</dict>
+</plist>

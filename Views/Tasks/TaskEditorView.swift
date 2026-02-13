@@ -9,7 +9,7 @@ struct TaskEditorView: View {
     @Environment(\.dismiss) private var dismiss
 
     let mode: TaskEditorMode
-    let onSave: (String, TaskType, Double, Double?, String?, String?, String?) -> Void
+    let onSave: (String, TaskType, Double, Double?, String?, String?, Bool, String?) -> Void
 
     @State private var name: String = ""
     @State private var selectedType: TaskType = .boolean
@@ -21,13 +21,14 @@ struct TaskEditorView: View {
     @State private var showCustomUnit: Bool = false
     @State private var selectedWorkoutType: String = "None"
     @State private var useHealthKit: Bool = false
+    @State private var usePushFitPro: Bool = false
     @State private var selectedIcon: String? = nil
     @State private var showingIconPicker = false
 
     private let predefinedUnits = ["None", "Pages", "Cups", "Steps", "Custom"]
     private let healthKitManager = HealthKitManager.shared
 
-    init(mode: TaskEditorMode, onSave: @escaping (String, TaskType, Double, Double?, String?, String?, String?) -> Void) {
+    init(mode: TaskEditorMode, onSave: @escaping (String, TaskType, Double, Double?, String?, String?, Bool, String?) -> Void) {
         self.mode = mode
         self.onSave = onSave
 
@@ -55,6 +56,9 @@ struct TaskEditorView: View {
                 _selectedWorkoutType = State(initialValue: workoutType)
                 _useHealthKit = State(initialValue: true)
             }
+
+            // Set PushFit Pro integration
+            _usePushFitPro = State(initialValue: task.pushFitProEnabled)
         }
     }
 
@@ -129,56 +133,72 @@ struct TaskEditorView: View {
                     }
                 }
 
-                // HealthKit section (only for duration tasks)
-                if selectedType == .duration && healthKitManager.isHealthKitAvailable {
+                // Targets section (hide for boolean tasks)
+                if selectedType != .boolean {
                     Section {
-                        Toggle("Sync from Fitness app", isOn: $useHealthKit)
-
-                        if useHealthKit {
-                            Picker("Workout Type", selection: $selectedWorkoutType) {
-                                Text("All Workouts").tag("None")
-                                ForEach(healthKitManager.availableWorkoutTypes, id: \.name) { workout in
-                                    Text(workout.name).tag(workout.name)
-                                }
-                            }
-                        }
-                    } header: {
-                        Text("Health Integration")
-                    } footer: {
-                        Text("Automatically sync workout time from the Fitness app. You'll be asked for permission on first use.")
-                    }
-                }
-
-                Section {
-                    HStack {
-                        Text("Minimum")
-                        Spacer()
-                        TextField("0", text: $minimumValue)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 100)
-                        Text(unitText)
-                            .foregroundColor(.secondary)
-                    }
-
-                    Toggle("Set Goal", isOn: $hasGoal)
-
-                    if hasGoal {
                         HStack {
-                            Text("Goal")
+                            Text("Minimum")
                             Spacer()
-                            TextField("0", text: $goalValue)
+                            TextField("0", text: $minimumValue)
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 100)
                             Text(unitText)
                                 .foregroundColor(.secondary)
                         }
+
+                        Toggle("Set Goal", isOn: $hasGoal)
+
+                        if hasGoal {
+                            HStack {
+                                Text("Goal")
+                                Spacer()
+                                TextField("0", text: $goalValue)
+                                    .keyboardType(.decimalPad)
+                                    .multilineTextAlignment(.trailing)
+                                    .frame(width: 100)
+                                Text(unitText)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    } header: {
+                        Text("Targets")
+                    } footer: {
+                        Text(footerText)
                     }
-                } header: {
-                    Text("Targets")
-                } footer: {
-                    Text(footerText)
+                }
+
+                // App Integration section
+                if selectedType == .time || selectedType == .count {
+                    Section {
+                        // HealthKit for time tasks
+                        if selectedType == .time && healthKitManager.isHealthKitAvailable {
+                            Toggle("Fitness (HealthKit)", isOn: $useHealthKit)
+
+                            if useHealthKit {
+                                Picker("Workout Type", selection: $selectedWorkoutType) {
+                                    Text("All Workouts").tag("None")
+                                    ForEach(healthKitManager.availableWorkoutTypes, id: \.name) { workout in
+                                        Text(workout.name).tag(workout.name)
+                                    }
+                                }
+                            }
+                        }
+
+                        // PushFit Pro for count tasks
+                        if selectedType == .count {
+                            Toggle("PushFit Pro", isOn: $usePushFitPro)
+                        }
+
+                    } header: {
+                        Text("App Integration")
+                    } footer: {
+                        if selectedType == .time {
+                            Text("Automatically sync workout data from other fitness apps. You'll be asked for permission on first use.")
+                        } else {
+                            Text("Sync rep counts from PushFit Pro. Make sure to enable data sharing in PushFit Pro settings.")
+                        }
+                    }
                 }
 
                 Section {
@@ -222,7 +242,7 @@ struct TaskEditorView: View {
                 return selectedUnit.lowercased()
             }
             return ""
-        case .duration, .timer:
+        case .time:
             return "min"
         }
     }
@@ -233,10 +253,8 @@ struct TaskEditorView: View {
             return "A day counts as Non-Zero if you mark it as done."
         case .count:
             return "A day counts as Non-Zero if you reach the minimum count."
-        case .duration:
-            return "A day counts as Non-Zero if you reach the minimum time (in minutes)."
-        case .timer:
-            return "A day counts as Non-Zero if you log the minimum time using the start/stop timer."
+        case .time:
+            return "A day counts as Non-Zero if you reach the minimum time (in minutes). You can manually add time or use the built-in timer."
         }
     }
 
@@ -246,10 +264,8 @@ struct TaskEditorView: View {
             return "Example: 'Meditation' with minimum 1 means any meditation session counts as a Non-Zero day."
         case .count:
             return "Example: 'Pushups' with minimum 5 means doing at least 5 pushups makes it a Non-Zero day. Goal of 20 gives you a target to aim for."
-        case .duration:
-            return "Example: 'Reading' with minimum 10 minutes and goal 30 minutes means any reading over 10 minutes counts, but you're aiming for 30."
-        case .timer:
-            return "Example: 'Focus Work' with minimum 25 minutes. Use the start/stop timer to track your focused work sessions."
+        case .time:
+            return "Example: 'Reading' with minimum 10 minutes and goal 30 minutes. You can add time manually (+5m, +15m, +30m buttons) or use the timer for continuous tracking."
         }
     }
 
@@ -269,17 +285,20 @@ struct TaskEditorView: View {
 
         // Determine the HealthKit workout type to save
         var workoutTypeToSave: String? = nil
-        if selectedType == .duration && useHealthKit {
+        if selectedType == .time && useHealthKit {
             workoutTypeToSave = selectedWorkoutType != "None" ? selectedWorkoutType : "All"
         }
 
-        onSave(name, selectedType, minimum, goal, unitToSave, workoutTypeToSave, selectedIcon)
+        // Determine PushFit Pro integration
+        let pushFitProToSave = selectedType == .count && usePushFitPro
+
+        onSave(name, selectedType, minimum, goal, unitToSave, workoutTypeToSave, pushFitProToSave, selectedIcon)
         dismiss()
     }
 }
 
 #Preview {
-    TaskEditorView(mode: .add) { name, type, min, goal, unit, workout, icon in
-        print("Saved: \(name), \(type), \(min), \(goal ?? 0), unit: \(unit ?? "none"), workout: \(workout ?? "none"), icon: \(icon ?? "none")")
+    TaskEditorView(mode: .add) { name, type, min, goal, unit, workout, pushFit, icon in
+        print("Saved: \(name), \(type), \(min), \(goal ?? 0), unit: \(unit ?? "none"), workout: \(workout ?? "none"), pushFit: \(pushFit), icon: \(icon ?? "none")")
     }
 }

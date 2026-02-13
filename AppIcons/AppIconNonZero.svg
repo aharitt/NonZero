@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background - Bright green gradient -->
+  <defs>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#34C759;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#30D158;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#greenGradient)" rx="180"/>
+
+  <!-- Happy face circle - lighter green -->
+  <circle cx="512" cy="512" r="380" fill="#52D97C" opacity="0.9"/>
+
+  <!-- Eyes - happy curved eyes -->
+  <path d="M 330 380 Q 380 340 430 380"
+        stroke="#1F5F2E"
+        stroke-width="45"
+        fill="none"
+        stroke-linecap="round"/>
+  <path d="M 594 380 Q 644 340 694 380"
+        stroke="#1F5F2E"
+        stroke-width="45"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Big happy smile -->
+  <path d="M 300 580 Q 512 720 724 580"
+        stroke="#1F5F2E"
+        stroke-width="55"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Checkmark badge at bottom -->
+  <circle cx="512" cy="820" r="100" fill="#FFFFFF" opacity="0.95"/>
+  <path d="M 460 820 L 495 860 L 565 780"
+        stroke="#34C759"
+        stroke-width="30"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Subtle highlight for depth -->
+  <circle cx="512" cy="512" r="380" fill="none" stroke="#FFFFFF" stroke-width="8" opacity="0.3"/>
+
+  <!-- Small sparkle effect -->
+  <circle cx="720" cy="300" r="20" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="760" cy="360" r="12" fill="#FFFFFF" opacity="0.6"/>
+</svg>

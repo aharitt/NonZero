@@ -82,6 +82,22 @@ class DataStore {
         }
     }
 
+    func deleteAllEntries() {
+        guard let context = context else { return }
+
+        let descriptor = FetchDescriptor<Entry>()
+
+        do {
+            let allEntries = try context.fetch(descriptor)
+            for entry in allEntries {
+                context.delete(entry)
+            }
+            saveContext()
+        } catch {
+            print("Failed to delete all entries: \(error)")
+        }
+    }
+
     // MARK: - Helper Methods
 
     func isNonZeroDay(date: Date) -> Bool {

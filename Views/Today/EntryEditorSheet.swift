@@ -20,7 +20,7 @@ struct EntryEditorSheet: View {
             switch task.taskType {
             case .boolean:
                 _boolValue = State(initialValue: entry.value >= 1.0)
-            case .count, .duration, .timer:
+            case .count, .time:
                 _value = State(initialValue: String(Int(entry.value)))
             }
             _note = State(initialValue: entry.note ?? "")
@@ -35,7 +35,7 @@ struct EntryEditorSheet: View {
         switch task.taskType {
         case .boolean:
             return true
-        case .count, .duration, .timer:
+        case .count, .time:
             return Double(value) != nil
         }
     }
@@ -66,7 +66,7 @@ struct EntryEditorSheet: View {
                                 .frame(width: 100)
                         }
 
-                    case .duration, .timer:
+                    case .time:
                         HStack {
                             Text("Minutes")
                             Spacer()
@@ -145,7 +145,7 @@ struct EntryEditorSheet: View {
         switch task.taskType {
         case .boolean:
             finalValue = boolValue ? 1.0 : 0.0
-        case .count, .duration, .timer:
+        case .count, .time:
             finalValue = Double(value) ?? 0.0
         }
 

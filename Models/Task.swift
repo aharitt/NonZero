@@ -4,8 +4,7 @@ import SwiftData
 enum TaskType: String, Codable, CaseIterable {
     case boolean = "Yes/No"
     case count = "Count"
-    case duration = "Duration"
-    case timer = "Timer"
+    case time = "Time"
 
     var displayName: String {
         return self.rawValue
@@ -20,7 +19,8 @@ final class Task {
     var minimumValue: Double
     var goalValue: Double?
     var unit: String? // Unit for count tasks (e.g., "pages", "cups", "steps")
-    var healthKitWorkoutType: String? // HealthKit workout type for duration tasks
+    var healthKitWorkoutType: String? // HealthKit workout type for time tasks
+    var pushFitProEnabled: Bool // PushFit Pro integration for count tasks
     var icon: String? // SF Symbol name for task icon
     var createdAt: Date
     var isArchived: Bool
@@ -38,6 +38,7 @@ final class Task {
         goalValue: Double? = nil,
         unit: String? = nil,
         healthKitWorkoutType: String? = nil,
+        pushFitProEnabled: Bool = false,
         icon: String? = nil,
         createdAt: Date = Date(),
         isArchived: Bool = false,
@@ -50,6 +51,7 @@ final class Task {
         self.goalValue = goalValue
         self.unit = unit
         self.healthKitWorkoutType = healthKitWorkoutType
+        self.pushFitProEnabled = pushFitProEnabled
         self.icon = icon
         self.createdAt = createdAt
         self.isArchived = isArchived

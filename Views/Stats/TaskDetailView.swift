@@ -6,14 +6,6 @@ struct TaskDetailView: View {
     let task: Task
     @State private var viewModel = StatsViewModel()
 
-    var totalValue: Double {
-        viewModel.getTotalValue(for: task)
-    }
-
-    var averageValue: Double {
-        viewModel.getAverageValue(for: task, days: 7)
-    }
-
     var recentEntries: [Entry] {
         task.entries
             .filter { $0.value > 0 }
@@ -36,21 +28,6 @@ struct TaskDetailView: View {
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "Total",
-                            value: Formatting.formatValue(totalValue, for: task.taskType),
-                            icon: "sum"
-                        )
-
-                        DetailStatCard(
-                            title: "7-Day Avg",
-                            value: Formatting.formatValue(averageValue, for: task.taskType),
-                            icon: "chart.bar"
-                        )
-                    }
-                    .padding(.horizontal)
-
-                    HStack(spacing: 12) {
-                        DetailStatCard(
                             title: "Current Streak",
                             value: "\(viewModel.getCurrentStreak(for: task))",
                             subtitle: "days",
@@ -59,30 +36,48 @@ struct TaskDetailView: View {
                         )
 
                         DetailStatCard(
-                            title: "Best Streak",
-                            value: "\(viewModel.getLongestStreak(for: task))",
-                            subtitle: "days",
-                            icon: "star.fill",
-                            color: .purple
+                            title: "Comeback",
+                            value: "\(viewModel.getComebackCount(for: task))",
+                            subtitle: "times",
+                            icon: "arrow.up.circle.fill",
+                            color: .green
                         )
                     }
                     .padding(.horizontal)
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "Comebacks",
-                            value: "\(viewModel.getComebackCount(for: task))",
-                            subtitle: "times",
-                            icon: "arrow.up.circle.fill",
-                            color: .green
+                            title: "Recovery Ratio",
+                            value: Formatting.formatPercentage(viewModel.getRecoveryRatio(for: task)),
+                            icon: "percent",
+                            color: .blue
                         )
 
+                        DetailStatCard(
+                            title: "Days Returned After Miss",
+                            value: "\(viewModel.getDaysReturnedAfterMiss(for: task))",
+                            subtitle: "days",
+                            icon: "arrow.uturn.up.circle.fill",
+                            color: .cyan
+                        )
+                    }
+                    .padding(.horizontal)
+
+                    HStack(spacing: 12) {
                         DetailStatCard(
                             title: "Non-Zero Days",
                             value: "\(viewModel.getTotalNonZeroDays(for: task))",
                             subtitle: "total",
                             icon: "checkmark.seal.fill",
-                            color: .blue
+                            color: .mint
+                        )
+
+                        DetailStatCard(
+                            title: "Best Streak",
+                            value: "\(viewModel.getLongestStreak(for: task))",
+                            subtitle: "days",
+                            icon: "star.fill",
+                            color: .purple
                         )
                     }
                     .padding(.horizontal)

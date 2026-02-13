@@ -36,10 +36,16 @@ class TodayViewModel {
         tasks = dataStore.fetchTasks(includeArchived: false)
         loadTodayEntries()
         updateBadge()
+        updateAppIcon()
     }
 
     private func updateBadge() {
         AppBadgeManager.shared.updateBadge(tasks: tasks, todayEntries: todayEntries)
+    }
+
+    private func updateAppIcon() {
+        let completionPercentage = AppIconManager.shared.calculateTodayCompletion(tasks: tasks)
+        AppIconManager.shared.updateIcon(completionPercentage: completionPercentage)
     }
 
     private func loadTodayEntries() {
@@ -160,13 +166,10 @@ class TodayViewModel {
         case .count:
             let suggested = Int(yesterdayEntry.value) + 1
             return "Yesterday: \(Int(yesterdayEntry.value)). Try \(suggested) today?"
-        case .duration:
+        case .time:
             let minutes = Int(yesterdayEntry.value)
             let suggested = minutes + 5
             return "Yesterday: \(minutes)m. Try \(suggested)m today?"
-        case .timer:
-            let minutes = Int(yesterdayEntry.value)
-            return "Yesterday: \(minutes)m. Can you beat it?"
         }
     }
 
@@ -184,8 +187,8 @@ class TodayViewModel {
             }
         }
 
-        // Sync data for tasks with HealthKit integration (only duration tasks support HealthKit)
-        for task in tasks where task.taskType == .duration && task.healthKitWorkoutType != nil {
+        // Sync data for tasks with HealthKit integration (only time tasks support HealthKit)
+        for task in tasks where task.taskType == .time && task.healthKitWorkoutType != nil {
             do {
                 let workoutType = healthKitManager.workoutType(from: task.healthKitWorkoutType)
                 let minutes = try await healthKitManager.fetchWorkoutMinutes(for: today, workoutType: workoutType)

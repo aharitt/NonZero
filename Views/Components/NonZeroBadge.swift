@@ -54,10 +54,8 @@ struct TaskTypeIcon: View {
             return "checkmark.circle"
         case .count:
             return "number.circle"
-        case .duration:
+        case .time:
             return "clock"
-        case .timer:
-            return "timer"
         }
     }
 
@@ -76,8 +74,7 @@ struct TaskTypeIcon: View {
         HStack {
             TaskTypeIcon(taskType: .boolean)
             TaskTypeIcon(taskType: .count)
-            TaskTypeIcon(taskType: .duration)
-            TaskTypeIcon(taskType: .timer)
+            TaskTypeIcon(taskType: .time)
         }
     }
     .padding()

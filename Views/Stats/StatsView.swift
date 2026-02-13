@@ -90,16 +90,16 @@ struct StatsTaskCard: View {
                 )
 
                 QuickStatItem(
-                    icon: "star.fill",
-                    value: "\(viewModel.getLongestStreak(for: task))",
-                    label: "Best",
-                    color: .purple
+                    icon: "arrow.up.circle.fill",
+                    value: "\(viewModel.getComebackCount(for: task))",
+                    label: "Comeback",
+                    color: .green
                 )
 
                 QuickStatItem(
-                    icon: "chart.bar.fill",
-                    value: Formatting.formatPercentage(viewModel.getCompletionRate(for: task, days: 7)),
-                    label: "7-Day",
+                    icon: "percent",
+                    value: Formatting.formatPercentage(viewModel.getRecoveryRatio(for: task)),
+                    label: "Recovery",
                     color: .blue
                 )
             }

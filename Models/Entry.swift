@@ -5,7 +5,7 @@ import SwiftData
 final class Entry {
     var id: UUID
     var date: Date // Normalized to start of day
-    var value: Double // Bool stored as 0/1, count as number, duration/timer in minutes
+    var value: Double // Bool stored as 0/1, count as number, time in minutes
     var note: String?
     var createdAt: Date
 
@@ -48,7 +48,7 @@ final class Entry {
                 return "\(countStr) \(unit.lowercased())"
             }
             return countStr
-        case .duration, .timer:
+        case .time:
             let minutes = Int(value)
             if minutes < 60 {
                 return "\(minutes)m"

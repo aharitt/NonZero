@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background - Gloomy gray-blue -->
+  <rect width="1024" height="1024" fill="#6B7280" rx="180"/>
+
+  <!-- Sad face circle -->
+  <circle cx="512" cy="512" r="380" fill="#4B5563" opacity="0.8"/>
+
+  <!-- Eyes - sad droopy -->
+  <ellipse cx="380" cy="420" rx="45" ry="55" fill="#374151"/>
+  <ellipse cx="644" cy="420" rx="45" ry="55" fill="#374151"/>
+
+  <!-- Sad mouth - downturned arc -->
+  <path d="M 340 650 Q 512 580 684 650"
+        stroke="#374151"
+        stroke-width="50"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Zero badge at bottom -->
+  <circle cx="512" cy="820" r="100" fill="#1F2937"/>
+  <text x="512" y="860"
+        font-family="system-ui, -apple-system, sans-serif"
+        font-size="120"
+        font-weight="bold"
+        fill="#9CA3AF"
+        text-anchor="middle">0</text>
+
+  <!-- Subtle shadow effect on face -->
+  <circle cx="512" cy="512" r="380" fill="none" stroke="#374151" stroke-width="8" opacity="0.3"/>
+</svg>

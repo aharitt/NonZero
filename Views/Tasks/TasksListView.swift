@@ -5,69 +5,13 @@ struct TasksListView: View {
     @State private var currentPage = 0
     @State private var taskToDelete: Task?
 
-    // Split tasks into pages of 6
-    var taskPages: [[Task]] {
-        let tasksPerPage = 6
-        let count = viewModel.tasks.count
-        var pages: [[Task]] = []
-
-        for startIndex in stride(from: 0, to: count, by: tasksPerPage) {
-            let endIndex = min(startIndex + tasksPerPage, count)
-            let page = Array(viewModel.tasks[startIndex..<endIndex])
-            pages.append(page)
-        }
-
-        return pages
-    }
-
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                if viewModel.tasks.isEmpty {
-                    ContentUnavailableView(
-                        "No Tasks",
-                        systemImage: "checklist",
-                        description: Text("Add your first task to get started")
-                    )
-                } else {
-                    // Paginated task list
-                    TabView(selection: $currentPage) {
-                        ForEach(Array(taskPages.enumerated()), id: \.offset) { pageIndex, pageTasks in
-                            List {
-                                ForEach(pageTasks) { task in
-                                    TaskRow(
-                                        task: task,
-                                        isSelected: viewModel.selectedTaskId == task.id,
-                                        onTap: {
-                                            withAnimation {
-                                                if viewModel.selectedTaskId == task.id {
-                                                    viewModel.selectedTaskId = nil
-                                                } else {
-                                                    viewModel.selectedTaskId = task.id
-                                                }
-                                            }
-                                        },
-                                        onEdit: {
-                                            viewModel.editingTask = task
-                                            viewModel.selectedTaskId = nil
-                                        },
-                                        onDelete: {
-                                            taskToDelete = task
-                                            viewModel.selectedTaskId = nil
-                                        }
-                                    )
-                                    .listRowSeparator(.hidden)
-                                    .listRowInsets(EdgeInsets(top: 3, leading: 16, bottom: 3, trailing: 16))
-                                }
-                            }
-                            .listStyle(.plain)
-                            .tag(pageIndex)
-                        }
-                    }
-                    .tabViewStyle(.page(indexDisplayMode: taskPages.count > 1 ? .always : .never))
-                    .indexViewStyle(.page(backgroundDisplayMode: .always))
-                }
-            }
+            TasksListContentView(
+                viewModel: viewModel,
+                currentPage: $currentPage,
+                taskToDelete: $taskToDelete
+            )
             .navigationTitle("Tasks")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -89,15 +33,15 @@ struct TasksListView: View {
                 }
             }
             .sheet(isPresented: $viewModel.showingAddTask) {
-                TaskEditorView(mode: .add) { name, type, minimum, goal, unit, workout, icon in
-                    viewModel.addTask(name: name, type: type, minimum: minimum, goal: goal, unit: unit, healthKitWorkout: workout, icon: icon)
+                TaskEditorView(mode: .add) { name, type, minimum, goal, unit, workout, pushFit, icon in
+                    viewModel.addTask(name: name, type: type, minimum: minimum, goal: goal, unit: unit, healthKitWorkout: workout, pushFitPro: pushFit, icon: icon)
                 }
             }
             .sheet(item: $viewModel.editingTask) { task in
                 TaskEditorView(
                     mode: .edit(task),
-                    onSave: { name, type, minimum, goal, unit, workout, icon in
-                        viewModel.updateTask(task, name: name, type: type, minimum: minimum, goal: goal, unit: unit, healthKitWorkout: workout, icon: icon)
+                    onSave: { name, type, minimum, goal, unit, workout, pushFit, icon in
+                        viewModel.updateTask(task, name: name, type: type, minimum: minimum, goal: goal, unit: unit, healthKitWorkout: workout, pushFitPro: pushFit, icon: icon)
                     }
                 )
             }
@@ -124,9 +68,115 @@ struct TasksListView: View {
                     Text("Are you sure you want to delete '\(task.name)'? This will also delete all associated entries.")
                 }
             }
-            .onAppear {
-                viewModel.loadTasks()
+        }
+    }
+}
+
+// Extracted content view to avoid compiler complexity issues
+struct TasksListContentView: View {
+    @Bindable var viewModel: TasksViewModel
+    @Binding var currentPage: Int
+    @Binding var taskToDelete: Task?
+    @State private var tasksPerPage: Int = 6
+    @State private var availableHeight: CGFloat = 0
+
+    var taskPages: [[Task]] {
+        let count = viewModel.tasks.count
+        var pages: [[Task]] = []
+
+        for startIndex in stride(from: 0, to: count, by: tasksPerPage) {
+            let endIndex = min(startIndex + tasksPerPage, count)
+            let page = Array(viewModel.tasks[startIndex..<endIndex])
+            pages.append(page)
+        }
+
+        return pages
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                if viewModel.tasks.isEmpty {
+                    ContentUnavailableView(
+                        "No Tasks",
+                        systemImage: "checklist",
+                        description: Text("Add your first task to get started")
+                    )
+                } else {
+                    TabView(selection: $currentPage) {
+                        ForEach(Array(taskPages.enumerated()), id: \.offset) { pageIndex, pageTasks in
+                            taskListPage(pageTasks: pageTasks, pageIndex: pageIndex)
+                        }
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: taskPages.count > 1 ? .always : .never))
+                    .indexViewStyle(.page(backgroundDisplayMode: .always))
+                }
             }
+            .onAppear {
+                // Load data once when view appears
+                if viewModel.tasks.isEmpty {
+                    viewModel.loadTasks()
+                }
+            }
+            .onChange(of: geometry.size) { oldSize, newSize in
+                // Recalculate when geometry changes
+                updateTasksPerPage(height: newSize.height)
+            }
+            .task {
+                // Initial calculation
+                updateTasksPerPage(height: geometry.size.height)
+            }
+        }
+    }
+
+    private func taskListPage(pageTasks: [Task], pageIndex: Int) -> some View {
+        List {
+            ForEach(pageTasks) { task in
+                TaskRow(
+                    task: task,
+                    isSelected: viewModel.selectedTaskId == task.id,
+                    onTap: {
+                        withAnimation {
+                            if viewModel.selectedTaskId == task.id {
+                                viewModel.selectedTaskId = nil
+                            } else {
+                                viewModel.selectedTaskId = task.id
+                            }
+                        }
+                    },
+                    onEdit: {
+                        viewModel.editingTask = task
+                        viewModel.selectedTaskId = nil
+                    },
+                    onDelete: {
+                        taskToDelete = task
+                        viewModel.selectedTaskId = nil
+                    }
+                )
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 3, leading: 16, bottom: 3, trailing: 16))
+            }
+        }
+        .listStyle(.plain)
+        .tag(pageIndex)
+    }
+
+    private func updateTasksPerPage(height: CGFloat) {
+        // Only recalculate if height has changed significantly (avoid flickering)
+        guard abs(height - availableHeight) > 10 else { return }
+        availableHeight = height
+
+        // TaskRow: ~72 points (row) + ~6 points (list row spacing) = ~78 points total
+        // Account for list spacing and page indicator
+        let estimatedRowHeight: CGFloat = 78
+        let pageIndicatorSpace: CGFloat = 30
+        let usableHeight = height - pageIndicatorSpace
+        let calculated = Int(usableHeight / estimatedRowHeight)
+        let newTasksPerPage = max(5, min(15, calculated))
+
+        // Only update if it actually changed
+        if tasksPerPage != newTasksPerPage {
+            tasksPerPage = newTasksPerPage
         }
     }
 }

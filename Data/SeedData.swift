@@ -21,7 +21,7 @@ class SeedData {
 
         let reading = Task(
             name: "Reading",
-            taskType: .duration,
+            taskType: .time,
             minimumValue: 5,
             goalValue: 30,
             icon: "book.fill"
@@ -36,7 +36,7 @@ class SeedData {
 
         let focusWork = Task(
             name: "Focus Work",
-            taskType: .timer,
+            taskType: .time,
             minimumValue: 25,
             goalValue: 120,
             icon: "flame.fill"

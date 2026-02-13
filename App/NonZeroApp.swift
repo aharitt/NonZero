@@ -7,9 +7,13 @@ struct NonZeroApp: App {
 
     init() {
         do {
-            let schema = Schema([Task.self, Entry.self])
-            let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-            modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            // Use migration plan for schema versioning
+            let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: false)
+            modelContainer = try ModelContainer(
+                for: Task.self, Entry.self,
+                migrationPlan: TaskMigrationPlan.self,
+                configurations: modelConfiguration
+            )
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }

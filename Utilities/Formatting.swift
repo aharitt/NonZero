@@ -58,7 +58,7 @@ struct Formatting {
                 return "\(countStr) \(unit.lowercased())"
             }
             return countStr
-        case .duration, .timer:
+        case .time:
             return formatTime(minutes: Int(value))
         }
     }
