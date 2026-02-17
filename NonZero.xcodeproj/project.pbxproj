@@ -28,6 +28,10 @@
 		C10246112F3A890700C417EA /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C10245E92F3A890600C417EA /* README.md */; };
 		C10246122F3A890700C417EA /* SETUP.md in Resources */ = {isa = PBXBuildFile; fileRef = C10245EA2F3A890600C417EA /* SETUP.md */; };
 		C10246132F3A890700C417EA /* FEATURES.md in Resources */ = {isa = PBXBuildFile; fileRef = C10245E52F3A890600C417EA /* FEATURES.md */; };
+		C15D95042F40449700321CCE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1AFD9442F3FE35E0090C36E /* WidgetKit.framework */; };
+		C15D95052F40449700321CCE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1AFD9462F3FE35E0090C36E /* SwiftUI.framework */; };
+		C15D95122F40449A00321CCE /* NonZeroWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C15D95032F40449600321CCE /* NonZeroWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C15D95252F40458A00321CCE /* TimerActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */; };
 		C1AFD9212F3AA80C0090C36E /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9202F3AA80C0090C36E /* HealthKitManager.swift */; };
 		C1AFD9232F3AB58A0090C36E /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9222F3AB58A0090C36E /* TimerManager.swift */; };
 		C1AFD9252F3B8AB60090C36E /* AppBadgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9242F3B8AB60090C36E /* AppBadgeManager.swift */; };
@@ -41,7 +45,32 @@
 		C1AFD9362F3E654F0090C36E /* TaskSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9352F3E654F0090C36E /* TaskSchema.swift */; };
 		C1AFD9392F3EF5000090C36E /* AppIconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9382F3EF5000090C36E /* AppIconManager.swift */; };
 		C1AFD93B2F3EF50F0090C36E /* DeviceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD93A2F3EF50F0090C36E /* DeviceHelper.swift */; };
+		C1AFD9612F3FE4170090C36E /* TimerActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C15D95102F40449A00321CCE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C10245CA2F3A887600C417EA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C15D95022F40449600321CCE;
+			remoteInfo = NonZeroWidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C1AFD95B2F3FE3610090C36E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C15D95122F40449A00321CCE /* NonZeroWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C10245D22F3A887600C417EA /* NonZero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NonZero.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -66,6 +95,9 @@
 		C10245F92F3A890600C417EA /* TasksListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksListView.swift; sourceTree = "<group>"; };
 		C10245FB2F3A890600C417EA /* EntryEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryEditorSheet.swift; sourceTree = "<group>"; };
 		C10245FC2F3A890600C417EA /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		C15D95032F40449600321CCE /* NonZeroWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NonZeroWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C15D95262F4045C000321CCE /* NonZeroWidgetsExtensionDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NonZeroWidgetsExtensionDebug.entitlements; sourceTree = "<group>"; };
+		C15D95272F40462D00321CCE /* NonZeroDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NonZeroDebug.entitlements; sourceTree = "<group>"; };
 		C1AFD91F2F3AA2CD0090C36E /* NonZero.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NonZero.entitlements; sourceTree = "<group>"; };
 		C1AFD9202F3AA80C0090C36E /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
 		C1AFD9222F3AB58A0090C36E /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
@@ -81,7 +113,36 @@
 		C1AFD9382F3EF5000090C36E /* AppIconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconManager.swift; sourceTree = "<group>"; };
 		C1AFD93A2F3EF50F0090C36E /* DeviceHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHelper.swift; sourceTree = "<group>"; };
 		C1AFD93C2F3EF5210090C36E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C1AFD9442F3FE35E0090C36E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C1AFD9462F3FE35E0090C36E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerActivityAttributes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C15D95132F40449A00321CCE /* Exceptions for "NonZeroWidgets" folder in "NonZeroWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C15D95022F40449600321CCE /* NonZeroWidgetsExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C15D95062F40449700321CCE /* NonZeroWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C15D95132F40449A00321CCE /* Exceptions for "NonZeroWidgets" folder in "NonZeroWidgetsExtension" target */,
+			);
+			path = NonZeroWidgets;
+			sourceTree = "<group>";
+		};
+		C1AFD9482F3FE35E0090C36E /* NonZeroWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NonZeroWidgets;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		C10245CF2F3A887600C417EA /* Frameworks */ = {
@@ -91,12 +152,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C15D95002F40449600321CCE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C15D95052F40449700321CCE /* SwiftUI.framework in Frameworks */,
+				C15D95042F40449700321CCE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		C10245C92F3A887600C417EA = {
 			isa = PBXGroup;
 			children = (
+				C15D95272F40462D00321CCE /* NonZeroDebug.entitlements */,
+				C15D95262F4045C000321CCE /* NonZeroWidgetsExtensionDebug.entitlements */,
 				C1AFD93C2F3EF5210090C36E /* Info.plist */,
 				C1AFD9262F3B8B940090C36E /* Assets.xcassets */,
 				C1AFD91F2F3AA2CD0090C36E /* NonZero.entitlements */,
@@ -109,6 +181,9 @@
 				C10245ED2F3A890600C417EA /* Utilities */,
 				C10245F12F3A890600C417EA /* ViewModels */,
 				C10245FE2F3A890600C417EA /* Views */,
+				C1AFD9482F3FE35E0090C36E /* NonZeroWidgets */,
+				C15D95062F40449700321CCE /* NonZeroWidgets */,
+				C1AFD9432F3FE35E0090C36E /* Frameworks */,
 				C10245D32F3A887600C417EA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -117,6 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				C10245D22F3A887600C417EA /* NonZero.app */,
+				C15D95032F40449600321CCE /* NonZeroWidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -132,6 +208,7 @@
 		C10245E42F3A890600C417EA /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */,
 				C1AFD92A2F3BD9890090C36E /* SettingsManager.swift */,
 				C1AFD9222F3AB58A0090C36E /* TimerManager.swift */,
 				C1AFD9202F3AA80C0090C36E /* HealthKitManager.swift */,
@@ -233,6 +310,15 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		C1AFD9432F3FE35E0090C36E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C1AFD9442F3FE35E0090C36E /* WidgetKit.framework */,
+				C1AFD9462F3FE35E0090C36E /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -243,10 +329,12 @@
 				C10245CE2F3A887600C417EA /* Sources */,
 				C10245CF2F3A887600C417EA /* Frameworks */,
 				C10245D02F3A887600C417EA /* Resources */,
+				C1AFD95B2F3FE3610090C36E /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C15D95112F40449A00321CCE /* PBXTargetDependency */,
 			);
 			name = NonZero;
 			packageProductDependencies = (
@@ -254,6 +342,28 @@
 			productName = NonZero;
 			productReference = C10245D22F3A887600C417EA /* NonZero.app */;
 			productType = "com.apple.product-type.application";
+		};
+		C15D95022F40449600321CCE /* NonZeroWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C15D95142F40449A00321CCE /* Build configuration list for PBXNativeTarget "NonZeroWidgetsExtension" */;
+			buildPhases = (
+				C15D94FF2F40449600321CCE /* Sources */,
+				C15D95002F40449600321CCE /* Frameworks */,
+				C15D95012F40449600321CCE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C15D95062F40449700321CCE /* NonZeroWidgets */,
+			);
+			name = NonZeroWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = NonZeroWidgetsExtension;
+			productReference = C15D95032F40449600321CCE /* NonZeroWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -266,6 +376,9 @@
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					C10245D12F3A887600C417EA = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					C15D95022F40449600321CCE = {
 						CreatedOnToolsVersion = 26.2;
 					};
 				};
@@ -285,6 +398,7 @@
 			projectRoot = "";
 			targets = (
 				C10245D12F3A887600C417EA /* NonZero */,
+				C15D95022F40449600321CCE /* NonZeroWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -298,6 +412,13 @@
 				C10246122F3A890700C417EA /* SETUP.md in Resources */,
 				C1AFD9272F3B8B940090C36E /* Assets.xcassets in Resources */,
 				C10246132F3A890700C417EA /* FEATURES.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C15D95012F40449600321CCE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +449,7 @@
 				C1AFD9302F3BD9B10090C36E /* SoundManager.swift in Sources */,
 				C10246082F3A890700C417EA /* SeedData.swift in Sources */,
 				C10246092F3A890700C417EA /* NonZeroBadge.swift in Sources */,
+				C1AFD9612F3FE4170090C36E /* TimerActivityAttributes.swift in Sources */,
 				C1AFD9342F3E441C0090C36E /* PastEntryEditorSheet.swift in Sources */,
 				C1AFD9362F3E654F0090C36E /* TaskSchema.swift in Sources */,
 				C102460A2F3A890700C417EA /* StatsView.swift in Sources */,
@@ -341,7 +463,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C15D94FF2F40449600321CCE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C15D95252F40458A00321CCE /* TimerActivityAttributes.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C15D95112F40449A00321CCE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C15D95022F40449600321CCE /* NonZeroWidgetsExtension */;
+			targetProxy = C15D95102F40449A00321CCE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		C10245DB2F3A887900C417EA /* Debug */ = {
@@ -397,6 +535,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivities = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -455,6 +594,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivities = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -470,16 +610,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = NonZero.entitlements;
+				CODE_SIGN_ENTITLEMENTS = NonZeroDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NonZero;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "NonZero needs access to your workout data to automatically track exercise time";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "NonZero needs to read your workout data.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -490,7 +632,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.aharitt.NonZero;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -511,13 +653,15 @@
 				CODE_SIGN_ENTITLEMENTS = NonZero.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = NonZero;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "NonZero needs access to your workout data to automatically track exercise time";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "NonZero needs to read your workout data.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -528,12 +672,75 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.anothereye.NonZero;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C15D95152F40449A00321CCE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = NonZeroWidgetsExtensionDebug.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 28;
+				DEVELOPMENT_TEAM = 9U967G3Y83;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NonZeroWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NonZeroWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero.NonZeroWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C15D95162F40449A00321CCE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 28;
+				DEVELOPMENT_TEAM = 9U967G3Y83;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NonZeroWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NonZeroWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero.NonZeroWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -558,6 +765,15 @@
 			buildConfigurations = (
 				C10245DE2F3A887900C417EA /* Debug */,
 				C10245DF2F3A887900C417EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C15D95142F40449A00321CCE /* Build configuration list for PBXNativeTarget "NonZeroWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C15D95152F40449A00321CCE /* Debug */,
+				C15D95162F40449A00321CCE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

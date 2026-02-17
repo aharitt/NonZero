@@ -84,14 +84,14 @@ struct StatsTaskCard: View {
             HStack(spacing: 8) {
                 QuickStatItem(
                     icon: "flame.fill",
-                    value: "\(viewModel.getCurrentStreak(for: task))",
+                    value: "\(task.currentStreak())",
                     label: "Streak",
                     color: .orange
                 )
 
                 QuickStatItem(
                     icon: "arrow.up.circle.fill",
-                    value: "\(viewModel.getComebackCount(for: task))",
+                    value: "\(task.comebackCount())",
                     label: "Comeback",
                     color: .green
                 )
@@ -154,7 +154,7 @@ struct StatsCardsView: View {
             HStack(spacing: 12) {
                 StatCard(
                     title: "Current Streak",
-                    value: "\(viewModel.getCurrentStreak(for: task))",
+                    value: "\(task.currentStreak())",
                     subtitle: "days",
                     color: .orange,
                     icon: "flame.fill"
@@ -162,7 +162,7 @@ struct StatsCardsView: View {
 
                 StatCard(
                     title: "Longest Streak",
-                    value: "\(viewModel.getLongestStreak(for: task))",
+                    value: "\(task.longestStreak())",
                     subtitle: "days",
                     color: .purple,
                     icon: "star.fill"
@@ -170,7 +170,7 @@ struct StatsCardsView: View {
 
                 StatCard(
                     title: "Comebacks",
-                    value: "\(viewModel.getComebackCount(for: task))",
+                    value: "\(task.comebackCount())",
                     subtitle: "times",
                     color: .green,
                     icon: "arrow.up.circle.fill"

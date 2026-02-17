@@ -41,6 +41,10 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
+	<!-- Enable Live Activities for lock screen timer display -->
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+
 	<!-- Supported interface orientations -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

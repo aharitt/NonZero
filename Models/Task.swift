@@ -80,14 +80,112 @@ final class Task {
     // Get current streak
     func currentStreak() -> Int {
         let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
         var streak = 0
-        var currentDate = calendar.startOfDay(for: Date())
 
+        // Check if today is completed
+        let todayCompleted = isCompleted(on: today)
+
+        // If today is completed, start from today; otherwise start from yesterday
+        var currentDate = todayCompleted ? today : calendar.date(byAdding: .day, value: -1, to: today)!
+
+        // Count consecutive completed days backwards
         while let entry = entry(for: currentDate), entry.isNonZero {
             streak += 1
-            currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate)!
+            guard let previousDay = calendar.date(byAdding: .day, value: -1, to: currentDate) else {
+                break
+            }
+            currentDate = previousDay
         }
 
         return streak
+    }
+
+    // Get longest streak ever
+    func longestStreak() -> Int {
+        let calendar = Calendar.current
+        var longestStreak = 0
+        var currentStreak = 0
+
+        // Sort entries by date
+        let sortedEntries = entries.sorted { $0.date < $1.date }
+        var previousDate: Date?
+
+        for entry in sortedEntries where entry.isNonZero {
+            if let prevDate = previousDate {
+                let daysDiff = calendar.dateComponents([.day], from: prevDate, to: entry.date).day ?? 0
+                if daysDiff == 1 {
+                    currentStreak += 1
+                } else {
+                    longestStreak = max(longestStreak, currentStreak)
+                    currentStreak = 1
+                }
+            } else {
+                currentStreak = 1
+            }
+            previousDate = entry.date
+        }
+
+        longestStreak = max(longestStreak, currentStreak)
+        return longestStreak
+    }
+
+    // MARK: - Statistics
+
+    /// Total sum of all entry values
+    func totalValue() -> Double {
+        return entries.reduce(0) { $0 + $1.value }
+    }
+
+    /// Total number of non-zero days (days where minimum was met)
+    func totalNonZeroDays() -> Int {
+        return entries.filter { $0.isNonZero }.count
+    }
+
+    /// Total number of logged days (any entry, even if below minimum)
+    func totalLoggedDays() -> Int {
+        return entries.count
+    }
+
+    /// Number of times user came back after a zero day
+    /// A comeback = any non-zero day that follows a zero day (or gap)
+    func comebackCount() -> Int {
+        let calendar = Calendar.current
+        var comebacks = 0
+
+        // Sort entries by date
+        let sortedEntries = entries.sorted { $0.date < $1.date }
+        guard !sortedEntries.isEmpty else { return 0 }
+
+        var previousWasZero = false
+
+        for entry in sortedEntries {
+            if entry.isNonZero && previousWasZero {
+                // Current day is non-zero and previous day was zero = comeback!
+                comebacks += 1
+                previousWasZero = false
+            } else if !entry.isNonZero {
+                // Current day is zero
+                previousWasZero = true
+            } else {
+                // Current day is non-zero, previous was also non-zero
+                previousWasZero = false
+            }
+        }
+
+        // Also check for comebacks after gaps (missing days)
+        var previousDate: Date?
+        for entry in sortedEntries where entry.isNonZero {
+            if let prevDate = previousDate {
+                let daysDiff = calendar.dateComponents([.day], from: prevDate, to: entry.date).day ?? 0
+                // If there's a gap of more than 1 day, count it as a comeback
+                if daysDiff > 1 {
+                    comebacks += 1
+                }
+            }
+            previousDate = entry.date
+        }
+
+        return comebacks
     }
 }

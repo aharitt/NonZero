@@ -61,7 +61,7 @@ class HealthKitManager: ObservableObject {
         let predicate = HKQuery.predicateForSamples(
             withStart: startOfDay,
             end: endOfDay,
-            options: .strictStartDate
+            options: []
         )
 
         let workoutPredicate: NSPredicate
@@ -87,19 +87,28 @@ class HealthKitManager: ObservableObject {
                 sortDescriptors: [sortDescriptor]
             ) { _, samples, error in
                 if let error = error {
+                    print("🏃 HealthKit query error: \(error)")
                     continuation.resume(throwing: error)
                     return
                 }
 
                 guard let workouts = samples as? [HKWorkout] else {
+                    print("🏃 No workouts found (samples is nil or wrong type)")
                     continuation.resume(returning: 0.0)
                     return
+                }
+
+                print("🏃 Found \(workouts.count) workout(s) for date range \(startOfDay) to \(endOfDay)")
+                for workout in workouts {
+                    let durationMin = workout.duration / 60.0
+                    print("🏃   - Type: \(workout.workoutActivityType.rawValue), Duration: \(durationMin) min, Start: \(workout.startDate)")
                 }
 
                 let totalMinutes = workouts.reduce(0.0) { total, workout in
                     total + workout.duration / 60.0 // Convert seconds to minutes
                 }
 
+                print("🏃 Total minutes: \(totalMinutes)")
                 continuation.resume(returning: totalMinutes)
             }
 

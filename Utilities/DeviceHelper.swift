@@ -18,16 +18,6 @@ struct DeviceHelper {
         return max(3, min(15, tasksPerPage))
     }
 
-    /// Get screen height
-    static var screenHeight: CGFloat {
-        UIScreen.main.bounds.height
-    }
-
-    /// Get screen width
-    static var screenWidth: CGFloat {
-        UIScreen.main.bounds.width
-    }
-
     /// Check if device is an iPad
     static var isIPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad

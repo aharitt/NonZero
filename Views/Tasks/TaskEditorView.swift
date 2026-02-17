@@ -24,9 +24,15 @@ struct TaskEditorView: View {
     @State private var usePushFitPro: Bool = false
     @State private var selectedIcon: String? = nil
     @State private var showingIconPicker = false
+    @FocusState private var focusedField: FocusedField?
 
     private let predefinedUnits = ["None", "Pages", "Cups", "Steps", "Custom"]
     private let healthKitManager = HealthKitManager.shared
+
+    private enum FocusedField {
+        case minimum
+        case goal
+    }
 
     init(mode: TaskEditorMode, onSave: @escaping (String, TaskType, Double, Double?, String?, String?, Bool, String?) -> Void) {
         self.mode = mode
@@ -141,8 +147,9 @@ struct TaskEditorView: View {
                             Spacer()
                             TextField("0", text: $minimumValue)
                                 .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 100)
+                                .multilineTextAlignment(.center)
+                                .frame(width: 60)
+                                .focused($focusedField, equals: .minimum)
                             Text(unitText)
                                 .foregroundColor(.secondary)
                         }
@@ -155,8 +162,9 @@ struct TaskEditorView: View {
                                 Spacer()
                                 TextField("0", text: $goalValue)
                                     .keyboardType(.decimalPad)
-                                    .multilineTextAlignment(.trailing)
-                                    .frame(width: 100)
+                                    .multilineTextAlignment(.center)
+                                    .frame(width: 60)
+                                    .focused($focusedField, equals: .goal)
                                 Text(unitText)
                                     .foregroundColor(.secondary)
                             }
@@ -211,6 +219,14 @@ struct TaskEditorView: View {
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: focusedField) { oldValue, newValue in
+                // When a numeric field gains focus, select all text for easy editing
+                if newValue == .minimum || newValue == .goal {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
+                    }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {

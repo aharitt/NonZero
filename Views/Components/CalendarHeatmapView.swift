@@ -10,6 +10,7 @@ struct CalendarHeatmapView: View {
     let task: Task
     let startDate: Date
     let endDate: Date
+    var onEntryChanged: (() -> Void)?
 
     @State private var selectedDate: IdentifiableDate?
 
@@ -17,8 +18,9 @@ struct CalendarHeatmapView: View {
     private let spacing: CGFloat = 4
     private let dataStore = DataStore.shared
 
-    init(task: Task, days: Int = 30) {
+    init(task: Task, days: Int = 30, onEntryChanged: (() -> Void)? = nil) {
         self.task = task
+        self.onEntryChanged = onEntryChanged
         let calendar = Calendar.current
         self.endDate = calendar.startOfDay(for: Date())
         self.startDate = calendar.date(byAdding: .day, value: -days + 1, to: endDate)!
@@ -75,6 +77,7 @@ struct CalendarHeatmapView: View {
             let entry = Entry(task: task, date: date, value: value, note: note)
             dataStore.addEntry(entry)
         }
+        onEntryChanged?()
     }
 }
 

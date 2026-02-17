@@ -5,6 +5,7 @@ import Charts
 struct TaskDetailView: View {
     let task: Task
     @State private var viewModel = StatsViewModel()
+    @State private var refreshID = UUID()
 
     var recentEntries: [Entry] {
         task.entries
@@ -17,9 +18,6 @@ struct TaskDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // Task Info
-                TaskInfoCard(task: task)
-
                 // Key Stats
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Statistics")
@@ -29,7 +27,7 @@ struct TaskDetailView: View {
                     HStack(spacing: 12) {
                         DetailStatCard(
                             title: "Current Streak",
-                            value: "\(viewModel.getCurrentStreak(for: task))",
+                            value: "\(task.currentStreak())",
                             subtitle: "days",
                             icon: "flame.fill",
                             color: .orange
@@ -37,7 +35,7 @@ struct TaskDetailView: View {
 
                         DetailStatCard(
                             title: "Comeback",
-                            value: "\(viewModel.getComebackCount(for: task))",
+                            value: "\(task.comebackCount())",
                             subtitle: "times",
                             icon: "arrow.up.circle.fill",
                             color: .green
@@ -66,7 +64,7 @@ struct TaskDetailView: View {
                     HStack(spacing: 12) {
                         DetailStatCard(
                             title: "Non-Zero Days",
-                            value: "\(viewModel.getTotalNonZeroDays(for: task))",
+                            value: "\(task.totalNonZeroDays())",
                             subtitle: "total",
                             icon: "checkmark.seal.fill",
                             color: .mint
@@ -74,7 +72,7 @@ struct TaskDetailView: View {
 
                         DetailStatCard(
                             title: "Best Streak",
-                            value: "\(viewModel.getLongestStreak(for: task))",
+                            value: "\(task.longestStreak())",
                             subtitle: "days",
                             icon: "star.fill",
                             color: .purple
@@ -112,9 +110,12 @@ struct TaskDetailView: View {
                     }
                     .padding(.horizontal)
                 }
+                .id(refreshID)
 
                 // Calendar Heatmap
-                CalendarHeatmapView(task: task, days: 60)
+                CalendarHeatmapView(task: task, days: 60, onEntryChanged: {
+                    refreshID = UUID()
+                })
                     .padding(.horizontal)
 
                 // Recent Entries
@@ -135,59 +136,20 @@ struct TaskDetailView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle(task.name)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 8) {
+                    TaskTypeIcon(taskType: task.taskType, size: 20)
+                    Text(task.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                }
+            }
+        }
         .onAppear {
             viewModel.loadTasks()
         }
-    }
-}
-
-struct TaskInfoCard: View {
-    let task: Task
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                TaskTypeIcon(taskType: task.taskType, size: 24)
-                Text(task.taskType.displayName)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                Spacer()
-                StreakBadge(streak: task.currentStreak())
-            }
-
-            Divider()
-
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Minimum")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Text(Formatting.formatValue(task.minimumValue, for: task.taskType))
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                }
-
-                Spacer()
-
-                if let goal = task.goalValue {
-                    VStack(alignment: .trailing, spacing: 4) {
-                        Text("Goal")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(Formatting.formatValue(goal, for: task.taskType))
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.blue)
-                    }
-                }
-            }
-        }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
-        .padding(.horizontal)
     }
 }
 

@@ -90,10 +90,8 @@ struct TodayView: View {
                 }
                 }
                 .onAppear {
-                    // Load data once when view appears
-                    if viewModel.tasks.isEmpty {
-                        viewModel.loadData()
-                    }
+                    // Reload data when view appears to pick up new tasks
+                    viewModel.loadData()
                 }
                 .onChange(of: geometry.size) { oldSize, newSize in
                     // Recalculate when geometry changes
@@ -168,13 +166,22 @@ struct TodayTaskCard: View {
         VStack(spacing: 6) {
             // Header with task name and current value
             HStack(spacing: 6) {
-                TaskTypeIcon(taskType: task.taskType, size: 18)
+                // Show checkmark for completed tasks, type icon for incomplete tasks
+                if isNonZero {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.green)
+                } else {
+                    TaskTypeIcon(taskType: task.taskType, size: 18)
+                }
+
                 Text(task.name)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 Spacer()
-                if entry != nil {
-                    Text(entry!.displayValue)
+                // Only show value if > 0 (don't show "0m")
+                if let entry = entry, entry.value > 0 {
+                    Text(entry.displayValue)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(isNonZero ? .green : .secondary)
@@ -299,8 +306,28 @@ struct TodayTaskCard: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .background(
+            ZStack(alignment: .leading) {
+                // Background color - subtle green tint for completed tasks
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isNonZero ? Color.green.opacity(0.08) : Color(.systemBackground))
+
+                // Left border accent for completed tasks
+                if isNonZero {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.green)
+                        .frame(width: 4)
+                }
+            }
+        )
+        .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemBackground))
+                .strokeBorder(isNonZero ? Color.green.opacity(0.2) : Color.clear, lineWidth: 1)
+        )
+        .shadow(
+            color: isNonZero ? Color.green.opacity(0.1) : Color.black.opacity(0.02),
+            radius: isNonZero ? 4 : 2,
+            x: 0,
+            y: isNonZero ? 2 : 1
         )
     }
 }

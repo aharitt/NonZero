@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import ActivityKit
 
 @MainActor
 @Observable
@@ -16,6 +17,9 @@ class TimerManager {
 
     // Timer to update UI every second
     private var displayTimer: Timer?
+
+    // Live Activity for lock screen display
+    private var currentActivity: Activity<TimerActivityAttributes>?
 
     // Computed elapsed time for current session
     var currentElapsedSeconds: TimeInterval {
@@ -52,19 +56,23 @@ class TimerManager {
     }
 
     // Start timer for a task
-    func startTimer(for taskId: UUID) {
+    func startTimer(for taskId: UUID, taskName: String) {
         // If another timer is running, stop it first
         if let currentTaskId = runningTaskId, currentTaskId != taskId {
             _ = stopTimer(for: currentTaskId)
         }
 
         runningTaskId = taskId
-        startTime = Date()
+        let now = Date()
+        startTime = now
         accumulatedSeconds = 0
         saveState()
 
         // Start display timer to trigger UI updates
         startDisplayTimer()
+
+        // Start Live Activity for lock screen display
+        startLiveActivity(taskId: taskId, taskName: taskName, startTime: now)
     }
 
     // Stop timer for a task and return total minutes
@@ -73,6 +81,9 @@ class TimerManager {
 
         let totalSeconds = totalElapsedSeconds
         let minutes = totalSeconds / 60.0
+
+        // Stop Live Activity
+        stopLiveActivity()
 
         // Reset state
         runningTaskId = nil
@@ -136,5 +147,43 @@ class TimerManager {
                 startDisplayTimer()
             }
         }
+    }
+
+    // MARK: - Live Activity
+
+    private func startLiveActivity(taskId: UUID, taskName: String, startTime: Date) {
+        // Check if Live Activities are supported (iOS 16.1+)
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
+            return
+        }
+
+        // End any existing activity
+        stopLiveActivity()
+
+        let attributes = TimerActivityAttributes(taskName: taskName, taskId: taskId)
+        let contentState = TimerActivityAttributes.ContentState(
+            elapsedSeconds: 0,
+            startTime: startTime
+        )
+
+        do {
+            currentActivity = try Activity<TimerActivityAttributes>.request(
+                attributes: attributes,
+                content: .init(state: contentState, staleDate: nil),
+                pushType: nil
+            )
+        } catch {
+            // Live Activity failed to start - silently continue
+        }
+    }
+
+    private func stopLiveActivity() {
+        guard let activity = currentActivity else { return }
+
+        _Concurrency.Task {
+            await activity.end(nil, dismissalPolicy: .immediate)
+        }
+
+        currentActivity = nil
     }
 }
