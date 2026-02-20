@@ -29,13 +29,14 @@ struct StreakBadge: View {
             Image(systemName: "flame.fill")
                 .foregroundColor(.orange)
             Text("\(streak)")
-                .font(.headline)
+                .font(.subheadline)
                 .fontWeight(.bold)
+                .fontDesign(.rounded)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
         .background(Color.orange.opacity(0.1))
-        .cornerRadius(12)
+        .clipShape(Capsule())
     }
 }
 

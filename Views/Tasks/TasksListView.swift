@@ -2,34 +2,161 @@ import SwiftUI
 
 struct TasksListView: View {
     @State private var viewModel = TasksViewModel()
-    @State private var currentPage = 0
     @State private var taskToDelete: Task?
+    @State private var currentPage = 0
+    @State private var tasksPerPage = 8
+    @State private var selectedTaskId: UUID?
+    private let estimatedRowHeight: CGFloat = 75
+
+    var totalPages: Int {
+        max(1, (viewModel.tasks.count + tasksPerPage - 1) / tasksPerPage)
+    }
+
+    func tasksForPage(_ page: Int) -> [Task] {
+        let start = page * tasksPerPage
+        let end = min(start + tasksPerPage, viewModel.tasks.count)
+        guard start < viewModel.tasks.count else { return [] }
+        return Array(viewModel.tasks[start..<end])
+    }
+
+    private func calculateTasksPerPage(height: CGFloat) {
+        let reserved: CGFloat = 64
+        let available = height - reserved
+        let count = max(1, Int(available / estimatedRowHeight))
+        if count != tasksPerPage {
+            tasksPerPage = count
+            currentPage = min(currentPage, max(0, totalPages - 1))
+        }
+    }
 
     var body: some View {
         NavigationStack {
-            TasksListContentView(
-                viewModel: viewModel,
-                currentPage: $currentPage,
-                taskToDelete: $taskToDelete
-            )
-            .navigationTitle("Tasks")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        viewModel.showingReorder = true
-                    } label: {
-                        Text("Reorder")
-                    }
-                    .disabled(viewModel.tasks.isEmpty)
-                }
+            Group {
+                if viewModel.tasks.isEmpty {
+                    ContentUnavailableView(
+                        "No Tasks",
+                        systemImage: "checklist",
+                        description: Text("Add your first task to get started")
+                    )
+                } else {
+                    GeometryReader { geo in
+                        VStack(spacing: 0) {
+                            // Title row with Reorder, pagination, and Add
+                            HStack(alignment: .firstTextBaseline) {
+                                Text("Tasks")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
 
-                ToolbarItem(placement: .primaryAction) {
+                                Spacer()
+
+                                Button {
+                                    viewModel.showingReorder = true
+                                } label: {
+                                    Text("Reorder")
+                                        .font(.subheadline)
+                                }
+                                .disabled(viewModel.tasks.isEmpty)
+
+                                if totalPages > 1 {
+                                    Button {
+                                        withAnimation { currentPage -= 1 }
+                                    } label: {
+                                        Image(systemName: "chevron.left")
+                                            .fontWeight(.semibold)
+                                    }
+                                    .disabled(currentPage == 0)
+
+                                    Text("\(currentPage + 1)/\(totalPages)")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                        .monospacedDigit()
+
+                                    Button {
+                                        withAnimation { currentPage += 1 }
+                                    } label: {
+                                        Image(systemName: "chevron.right")
+                                            .fontWeight(.semibold)
+                                    }
+                                    .disabled(currentPage >= totalPages - 1)
+                                }
+
+                                Button {
+                                    viewModel.showingAddTask = true
+                                } label: {
+                                    Image(systemName: "plus")
+                                        .fontWeight(.semibold)
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top, 8)
+                            .padding(.bottom, 4)
+
+                            TabView(selection: $currentPage) {
+                                ForEach(0..<totalPages, id: \.self) { page in
+                                    ScrollView {
+                                        LazyVStack(spacing: 10) {
+                                            ForEach(tasksForPage(page)) { task in
+                                                TaskRow(
+                                                    task: task,
+                                                    isSelected: selectedTaskId == task.id,
+                                                    onEdit: {
+                                                        selectedTaskId = nil
+                                                        viewModel.editingTask = task
+                                                    },
+                                                    onDelete: {
+                                                        selectedTaskId = nil
+                                                        taskToDelete = task
+                                                    },
+                                                    onLongPress: {
+                                                        withAnimation(.easeOut(duration: 0.2)) {
+                                                            selectedTaskId = selectedTaskId == task.id ? nil : task.id
+                                                        }
+                                                    },
+                                                    onTap: {
+                                                        if selectedTaskId != nil {
+                                                            withAnimation(.easeOut(duration: 0.2)) {
+                                                                selectedTaskId = nil
+                                                            }
+                                                        }
+                                                    }
+                                                )
+                                            }
+                                        }
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 8)
+                                    }
+                                    .tag(page)
+                                }
+                            }
+                            .tabViewStyle(.page(indexDisplayMode: .never))
+                        }
+                        .onAppear { calculateTasksPerPage(height: geo.size.height) }
+                        .onChange(of: geo.size.height) { _, newHeight in
+                            calculateTasksPerPage(height: newHeight)
+                        }
+                    }
+                    .background(Color(.systemGroupedBackground))
+                }
+            }
+            .navigationTitle("Tasks")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         viewModel.showingAddTask = true
                     } label: {
                         Image(systemName: "plus")
                     }
+                }
+            }
+            .toolbar(viewModel.tasks.isEmpty ? .visible : .hidden, for: .navigationBar)
+            .onAppear {
+                if viewModel.tasks.isEmpty {
+                    viewModel.loadTasks()
+                }
+            }
+            .onChange(of: viewModel.tasks.count) {
+                if currentPage >= totalPages {
+                    currentPage = max(0, totalPages - 1)
                 }
             }
             .sheet(isPresented: $viewModel.showingAddTask) {
@@ -72,136 +199,62 @@ struct TasksListView: View {
     }
 }
 
-// Extracted content view to avoid compiler complexity issues
-struct TasksListContentView: View {
-    @Bindable var viewModel: TasksViewModel
-    @Binding var currentPage: Int
-    @Binding var taskToDelete: Task?
-    @State private var tasksPerPage: Int = 6
-    @State private var availableHeight: CGFloat = 0
-
-    var taskPages: [[Task]] {
-        let count = viewModel.tasks.count
-        var pages: [[Task]] = []
-
-        for startIndex in stride(from: 0, to: count, by: tasksPerPage) {
-            let endIndex = min(startIndex + tasksPerPage, count)
-            let page = Array(viewModel.tasks[startIndex..<endIndex])
-            pages.append(page)
-        }
-
-        return pages
-    }
-
-    var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                if viewModel.tasks.isEmpty {
-                    ContentUnavailableView(
-                        "No Tasks",
-                        systemImage: "checklist",
-                        description: Text("Add your first task to get started")
-                    )
-                } else {
-                    TabView(selection: $currentPage) {
-                        ForEach(Array(taskPages.enumerated()), id: \.offset) { pageIndex, pageTasks in
-                            taskListPage(pageTasks: pageTasks, pageIndex: pageIndex)
-                        }
-                    }
-                    .tabViewStyle(.page(indexDisplayMode: taskPages.count > 1 ? .always : .never))
-                    .indexViewStyle(.page(backgroundDisplayMode: .always))
-                }
-            }
-            .onAppear {
-                // Load data once when view appears
-                if viewModel.tasks.isEmpty {
-                    viewModel.loadTasks()
-                }
-            }
-            .onChange(of: geometry.size) { oldSize, newSize in
-                // Recalculate when geometry changes
-                updateTasksPerPage(height: newSize.height)
-            }
-            .task {
-                // Initial calculation
-                updateTasksPerPage(height: geometry.size.height)
-            }
-        }
-    }
-
-    private func taskListPage(pageTasks: [Task], pageIndex: Int) -> some View {
-        List {
-            ForEach(pageTasks) { task in
-                TaskRow(
-                    task: task,
-                    isSelected: viewModel.selectedTaskId == task.id,
-                    onTap: {
-                        withAnimation {
-                            if viewModel.selectedTaskId == task.id {
-                                viewModel.selectedTaskId = nil
-                            } else {
-                                viewModel.selectedTaskId = task.id
-                            }
-                        }
-                    },
-                    onEdit: {
-                        viewModel.editingTask = task
-                        viewModel.selectedTaskId = nil
-                    },
-                    onDelete: {
-                        taskToDelete = task
-                        viewModel.selectedTaskId = nil
-                    }
-                )
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(top: 3, leading: 16, bottom: 3, trailing: 16))
-            }
-        }
-        .listStyle(.plain)
-        .tag(pageIndex)
-    }
-
-    private func updateTasksPerPage(height: CGFloat) {
-        // Only recalculate if height has changed significantly (avoid flickering)
-        guard abs(height - availableHeight) > 10 else { return }
-        availableHeight = height
-
-        // TaskRow: ~72 points (row) + ~6 points (list row spacing) = ~78 points total
-        // Account for list spacing and page indicator
-        let estimatedRowHeight: CGFloat = 78
-        let pageIndicatorSpace: CGFloat = 30
-        let usableHeight = height - pageIndicatorSpace
-        let calculated = Int(usableHeight / estimatedRowHeight)
-        let newTasksPerPage = max(5, min(15, calculated))
-
-        // Only update if it actually changed
-        if tasksPerPage != newTasksPerPage {
-            tasksPerPage = newTasksPerPage
-        }
-    }
-}
-
 struct TaskRow: View {
     let task: Task
     let isSelected: Bool
-    let onTap: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
+    let onLongPress: () -> Void
+    let onTap: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            // Edit and Delete buttons (shown when selected)
+        HStack(spacing: 0) {
+            // Card content — shifts left when selected
+            HStack(spacing: 12) {
+                TaskTypeIcon(taskType: task.taskType, size: 20)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(task.name)
+                        .font(.body)
+                        .fontWeight(.semibold)
+
+                    HStack(spacing: 6) {
+                        Text("Min: \(Formatting.formatValue(task.minimumValue, for: task.taskType, unit: task.unit))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        if let goal = task.goalValue {
+                            Text("·")
+                                .foregroundColor(.secondary)
+                            Text("Goal: \(Formatting.formatValue(goal, for: task.taskType, unit: task.unit))")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+
+                Spacer()
+
+                StreakBadge(streak: task.currentStreak())
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
+
+            // Action buttons — slide in from right
             if isSelected {
-                HStack(spacing: 8) {
+                HStack(spacing: 0) {
                     Button {
                         onEdit()
                     } label: {
                         Image(systemName: "pencil")
-                            .font(.system(size: 16))
-                            .foregroundColor(.blue)
-                            .frame(width: 32, height: 32)
-                            .background(Color.blue.opacity(0.1))
-                            .clipShape(Circle())
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 56)
+                            .background(Color.blue)
                     }
                     .buttonStyle(.plain)
 
@@ -209,59 +262,25 @@ struct TaskRow: View {
                         onDelete()
                     } label: {
                         Image(systemName: "trash")
-                            .font(.system(size: 16))
-                            .foregroundColor(.red)
-                            .frame(width: 32, height: 32)
-                            .background(Color.red.opacity(0.1))
-                            .clipShape(Circle())
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 56)
+                            .background(Color.red)
                     }
                     .buttonStyle(.plain)
                 }
-                .transition(.move(edge: .leading).combined(with: .opacity))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.leading, 8)
+                .transition(.move(edge: .trailing).combined(with: .opacity))
             }
-
-            TaskTypeIcon(taskType: task.taskType, size: 18)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(task.name)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-
-                HStack(spacing: 6) {
-                    Text("Min: \(Formatting.formatValue(task.minimumValue, for: task.taskType, unit: task.unit))")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-
-                    if let goal = task.goalValue {
-                        Text("·")
-                            .foregroundColor(.secondary)
-                        Text("Goal: \(Formatting.formatValue(goal, for: task.taskType, unit: task.unit))")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-
-            Spacer()
-
-            StreakBadge(streak: task.currentStreak())
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemBackground))
-        )
         .contentShape(Rectangle())
         .onTapGesture {
-            // Quick tap only works to deselect when already selected
-            if isSelected {
-                onTap()
-            }
+            onTap()
         }
         .onLongPressGesture(minimumDuration: 0.5) {
-            // Long press to select/toggle
-            onTap()
+            onLongPress()
         }
     }
 }

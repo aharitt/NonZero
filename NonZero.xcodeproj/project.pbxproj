@@ -46,6 +46,7 @@
 		C1AFD9392F3EF5000090C36E /* AppIconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9382F3EF5000090C36E /* AppIconManager.swift */; };
 		C1AFD93B2F3EF50F0090C36E /* DeviceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD93A2F3EF50F0090C36E /* DeviceHelper.swift */; };
 		C1AFD9612F3FE4170090C36E /* TimerActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */; };
+		C1D392CD2F466E6E00C3C803 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D392CB2F466E6E00C3C803 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +117,7 @@
 		C1AFD9442F3FE35E0090C36E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C1AFD9462F3FE35E0090C36E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerActivityAttributes.swift; sourceTree = "<group>"; };
+		C1D392CB2F466E6E00C3C803 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -293,6 +295,7 @@
 		C10245FE2F3A890600C417EA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C1D392CC2F466E6E00C3C803 /* Onboarding */,
 				C1AFD92D2F3BD99B0090C36E /* Settings */,
 				C10245F42F3A890600C417EA /* Components */,
 				C10245F72F3A890600C417EA /* Stats */,
@@ -317,6 +320,14 @@
 				C1AFD9462F3FE35E0090C36E /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C1D392CC2F466E6E00C3C803 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				C1D392CB2F466E6E00C3C803 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -442,6 +453,7 @@
 				C1AFD92E2F3BD99B0090C36E /* SettingsView.swift in Sources */,
 				C10246042F3A890700C417EA /* TasksViewModel.swift in Sources */,
 				C10246052F3A890700C417EA /* CalendarHeatmapView.swift in Sources */,
+				C1D392CD2F466E6E00C3C803 /* OnboardingView.swift in Sources */,
 				C10246062F3A890700C417EA /* TasksListView.swift in Sources */,
 				C1AFD9322F3BE7EB0090C36E /* ReorderTasksView.swift in Sources */,
 				C1AFD9392F3EF5000090C36E /* AppIconManager.swift in Sources */,
@@ -613,7 +625,7 @@
 				CODE_SIGN_ENTITLEMENTS = NonZeroDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -627,11 +639,12 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -653,7 +666,7 @@
 				CODE_SIGN_ENTITLEMENTS = NonZero.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -667,11 +680,12 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -693,18 +707,20 @@
 				CODE_SIGN_ENTITLEMENTS = NonZeroWidgetsExtensionDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NonZeroWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NonZeroWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero.NonZeroWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -724,18 +740,20 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NonZeroWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NonZeroWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero.NonZeroWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

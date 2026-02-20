@@ -11,8 +11,28 @@ class TodayViewModel {
 
     private let dataStore = DataStore.shared
     private let timerManager = TimerManager.shared
+    private let settingsManager = SettingsManager.shared
     var today: Date {
         Calendar.current.startOfDay(for: Date())
+    }
+
+    // Stored properties updated by loadData() to avoid SwiftData relationship
+    // traversal in computed properties, which can cause observation loops
+    var dayScorePercentage: Int = 0
+    var isNonZeroDay: Bool = false
+
+    private func updateDayScore() {
+        guard !tasks.isEmpty else {
+            dayScorePercentage = 0
+            isNonZeroDay = false
+            return
+        }
+        let completedCount = tasks.filter { task in
+            guard let entry = todayEntries[task.id] else { return false }
+            return task.meetsMinimum(value: entry.value)
+        }.count
+        dayScorePercentage = Int(Double(completedCount) / Double(tasks.count) * 100)
+        isNonZeroDay = dayScorePercentage >= settingsManager.dayScoreCriteria
     }
 
     init() {
@@ -35,6 +55,7 @@ class TodayViewModel {
     func loadData() {
         tasks = dataStore.fetchTasks(includeArchived: false)
         loadTodayEntries()
+        updateDayScore()
         updateBadge()
         updateAppIcon()
     }
@@ -106,13 +127,6 @@ class TodayViewModel {
         return timerManager.isRunning(taskId: task.id)
     }
 
-    func getTimerElapsedTime(for task: Task) -> String {
-        guard timerManager.isRunning(taskId: task.id) else { return "0:00" }
-        // Access lastUpdate to ensure view tracks timer changes
-        _ = timerManager.lastUpdate
-        return timerManager.formattedElapsedTime
-    }
-
     func startTimer(for task: Task) {
         timerManager.startTimer(for: task.id, taskName: task.name)
     }
@@ -120,9 +134,11 @@ class TodayViewModel {
     func stopTimer(for task: Task) {
         let elapsedMinutes = timerManager.stopTimer(for: task.id)
 
-        // Add the elapsed time to today's entry
-        if elapsedMinutes > 0 {
-            addTime(task: task, minutes: elapsedMinutes)
+        // Defer data save to next run loop so UI updates immediately
+        _Concurrency.Task { @MainActor in
+            if elapsedMinutes > 0 {
+                addTime(task: task, minutes: elapsedMinutes)
+            }
         }
     }
 
@@ -284,13 +300,10 @@ class TodayViewModel {
         // Sync data for tasks with HealthKit integration (only time tasks support HealthKit)
         for task in tasks where task.taskType == .time && task.healthKitWorkoutType != nil {
             do {
-                print("📊 Syncing HealthKit for task: \(task.name)")
-                print("📊 Looking for workout type: \(task.healthKitWorkoutType ?? "nil")")
+                let healthKitType = task.healthKitWorkoutType!
+                print("📊 Syncing HealthKit for task: \(task.name), type: \(healthKitType)")
 
-                let workoutType = healthKitManager.workoutType(from: task.healthKitWorkoutType)
-                print("📊 Converted to HKWorkoutActivityType: \(String(describing: workoutType))")
-
-                let minutes = try await healthKitManager.fetchWorkoutMinutes(for: today, workoutType: workoutType)
+                let minutes = try await healthKitManager.fetchMinutes(for: today, healthKitType: healthKitType)
                 print("📊 Found \(minutes) minutes from HealthKit")
 
                 if minutes > 0 {

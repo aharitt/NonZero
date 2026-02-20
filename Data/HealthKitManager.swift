@@ -9,6 +9,10 @@ class HealthKitManager: ObservableObject {
     private let healthStore = HKHealthStore()
     @Published var isAuthorized = false
 
+    // Special key for Exercise Ring minutes (appleExerciseTime)
+    static let exerciseMinutesKey = "Exercise Minutes"
+    static let allWorkoutsKey = "All"
+
     // Common workout types users might track
     let availableWorkoutTypes: [(name: String, type: HKWorkoutActivityType)] = [
         ("Running", .running),
@@ -34,18 +38,73 @@ class HealthKitManager: ObservableObject {
         return HKHealthStore.isHealthDataAvailable()
     }
 
-    // Request authorization to read workout data
+    // Request authorization to read workout data and exercise time
     func requestAuthorization() async throws {
         guard isHealthKitAvailable else {
             throw HealthKitError.notAvailable
         }
 
-        let workoutType = HKObjectType.workoutType()
+        var typesToRead: Set<HKObjectType> = [HKObjectType.workoutType()]
+        if let exerciseTimeType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime) {
+            typesToRead.insert(exerciseTimeType)
+        }
 
-        try await healthStore.requestAuthorization(toShare: [], read: [workoutType])
+        try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
 
-        let status = healthStore.authorizationStatus(for: workoutType)
-        isAuthorized = (status == .sharingAuthorized)
+        // For read-only access, HealthKit doesn't reveal if user granted permission.
+        // Mark as authorized after requesting — queries will return empty if denied.
+        isAuthorized = true
+    }
+
+    // Fetch exercise minutes — dispatches to workout query or exercise ring query
+    func fetchMinutes(for date: Date, healthKitType: String) async throws -> Double {
+        if healthKitType == Self.exerciseMinutesKey {
+            return try await fetchExerciseRingMinutes(for: date)
+        } else {
+            let workoutType = self.workoutType(from: healthKitType)
+            return try await fetchWorkoutMinutes(for: date, workoutType: workoutType)
+        }
+    }
+
+    // Fetch Exercise Ring minutes (appleExerciseTime) for a specific date
+    func fetchExerciseRingMinutes(for date: Date) async throws -> Double {
+        guard isHealthKitAvailable else {
+            throw HealthKitError.notAvailable
+        }
+
+        guard let exerciseTimeType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime) else {
+            throw HealthKitError.fetchFailed
+        }
+
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startOfDay,
+            end: endOfDay,
+            options: .strictStartDate
+        )
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: exerciseTimeType,
+                quantitySamplePredicate: predicate,
+                options: .cumulativeSum
+            ) { _, statistics, error in
+                if let error = error {
+                    print("🏃 Exercise ring query error: \(error)")
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                let minutes = statistics?.sumQuantity()?.doubleValue(for: .minute()) ?? 0.0
+                print("🏃 Exercise ring minutes: \(minutes)")
+                continuation.resume(returning: minutes)
+            }
+
+            healthStore.execute(query)
+        }
     }
 
     // Fetch total workout time for a specific date and workout type
@@ -118,7 +177,7 @@ class HealthKitManager: ObservableObject {
 
     // Get workout type from string name
     func workoutType(from name: String?) -> HKWorkoutActivityType? {
-        guard let name = name else { return nil }
+        guard let name = name, name != Self.allWorkoutsKey else { return nil }
         return availableWorkoutTypes.first { $0.name == name }?.type
     }
 

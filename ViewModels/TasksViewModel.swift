@@ -8,12 +8,24 @@ class TasksViewModel {
     var showingAddTask = false
     var editingTask: Task?
     var showingReorder = false
-    var selectedTaskId: UUID?
 
     private let dataStore = DataStore.shared
 
     init() {
         loadTasks()
+        setupNotificationObserver()
+    }
+
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            forName: .refreshBadge,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.loadTasks()
+            }
+        }
     }
 
     func loadTasks() {

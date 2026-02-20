@@ -31,8 +31,22 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
     @State private var hasInitialized = false
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
     var body: some View {
+        if !hasSeenOnboarding {
+            OnboardingView {
+                withAnimation {
+                    hasSeenOnboarding = true
+                }
+            }
+        } else {
+            mainTabView
+        }
+    }
+
+    @ViewBuilder
+    private var mainTabView: some View {
         TabView {
             TodayView()
                 .tabItem {
@@ -60,6 +74,10 @@ struct ContentView: View {
                 // Optionally seed data for testing
                 // SeedData.createSampleData(in: modelContext)
                 hasInitialized = true
+
+                // Notify all ViewModels to reload now that DataStore is ready
+                // (child onAppear fires before parent, so initial loads got nil context)
+                NotificationCenter.default.post(name: .refreshBadge, object: nil)
             }
         }
         .task {

@@ -24,9 +24,16 @@ class SettingsManager {
         }
     }
 
+    var dayScoreCriteria: Int {
+        didSet {
+            UserDefaults.standard.set(dayScoreCriteria, forKey: "dayScoreCriteria")
+        }
+    }
+
     private init() {
         // Load settings from UserDefaults
         self.showBadge = UserDefaults.standard.object(forKey: "showBadge") as? Bool ?? true
         self.playSounds = UserDefaults.standard.object(forKey: "playSounds") as? Bool ?? true
+        self.dayScoreCriteria = UserDefaults.standard.object(forKey: "dayScoreCriteria") as? Int ?? 10
     }
 }

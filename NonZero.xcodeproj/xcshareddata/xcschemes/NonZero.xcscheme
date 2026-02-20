@@ -10,6 +10,20 @@
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C15D95022F40449600321CCE"
+               BuildableName = "NonZeroWidgetsExtension.appex"
+               BlueprintName = "NonZeroWidgetsExtension"
+               ReferencedContainer = "container:NonZero.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
@@ -19,20 +33,6 @@
                BlueprintIdentifier = "C10245D12F3A887600C417EA"
                BuildableName = "NonZero.app"
                BlueprintName = "NonZero"
-               ReferencedContainer = "container:NonZero.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "NO"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C15D95022F40449600321CCE"
-               BuildableName = "NonZeroWidgetsExtension.appex"
-               BlueprintName = "NonZeroWidgetsExtension"
                ReferencedContainer = "container:NonZero.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

@@ -82,6 +82,22 @@ class DataStore {
         }
     }
 
+    func deleteAllData() {
+        guard let context = context else { return }
+
+        // Delete all tasks — entries are cascade-deleted automatically
+        let descriptor = FetchDescriptor<Task>()
+        do {
+            let allTasks = try context.fetch(descriptor)
+            for task in allTasks {
+                context.delete(task)
+            }
+            saveContext()
+        } catch {
+            print("Failed to delete all data: \(error)")
+        }
+    }
+
     func deleteAllEntries() {
         guard let context = context else { return }
 

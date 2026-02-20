@@ -4,52 +4,118 @@ import Charts
 struct StatsView: View {
     @State private var viewModel = StatsViewModel()
     @State private var currentPage = 0
+    @State private var tasksPerPage = 6
+    private let estimatedCardHeight: CGFloat = 120
 
-    // Split tasks into pages of 6
-    var taskPages: [[Task]] {
-        let tasksPerPage = 6
-        return stride(from: 0, to: viewModel.tasks.count, by: tasksPerPage).map {
-            Array(viewModel.tasks[$0..<min($0 + tasksPerPage, viewModel.tasks.count)])
+    var totalPages: Int {
+        max(1, (viewModel.tasks.count + tasksPerPage - 1) / tasksPerPage)
+    }
+
+    func tasksForPage(_ page: Int) -> [Task] {
+        let start = page * tasksPerPage
+        let end = min(start + tasksPerPage, viewModel.tasks.count)
+        guard start < viewModel.tasks.count else { return [] }
+        return Array(viewModel.tasks[start..<end])
+    }
+
+    private func calculateTasksPerPage(height: CGFloat) {
+        // GeometryReader height already excludes nav bar and tab bar
+        // Reserve space for: title row (~48) + padding (~16)
+        let reserved: CGFloat = 64
+        let available = height - reserved
+        let count = max(1, Int(available / estimatedCardHeight))
+        if count != tasksPerPage {
+            tasksPerPage = count
+            currentPage = min(currentPage, max(0, totalPages - 1))
         }
     }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
+            Group {
                 if viewModel.tasks.isEmpty {
                     ContentUnavailableView(
                         "No Stats Yet",
                         systemImage: "chart.bar",
                         description: Text("Add tasks and log entries to see your progress")
                     )
-                    .padding()
                 } else {
-                    // Paginated task stats view
-                    TabView(selection: $currentPage) {
-                        ForEach(Array(taskPages.enumerated()), id: \.offset) { pageIndex, pageTasks in
-                            ScrollView {
-                                VStack(spacing: 6) {
-                                    ForEach(pageTasks) { task in
-                                        NavigationLink {
-                                            TaskDetailView(task: task)
-                                        } label: {
-                                            StatsTaskCard(viewModel: viewModel, task: task)
-                                        }
-                                        .buttonStyle(.plain)
+                    GeometryReader { geo in
+                        VStack(spacing: 0) {
+                            // Title row with pagination arrows
+                            HStack(alignment: .firstTextBaseline) {
+                                Text("Stats")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+
+                                Spacer()
+
+                                if totalPages > 1 {
+                                    Button {
+                                        withAnimation { currentPage -= 1 }
+                                    } label: {
+                                        Image(systemName: "chevron.left")
+                                            .fontWeight(.semibold)
                                     }
+                                    .disabled(currentPage == 0)
+
+                                    Text("\(currentPage + 1)/\(totalPages)")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                        .monospacedDigit()
+
+                                    Button {
+                                        withAnimation { currentPage += 1 }
+                                    } label: {
+                                        Image(systemName: "chevron.right")
+                                            .fontWeight(.semibold)
+                                    }
+                                    .disabled(currentPage >= totalPages - 1)
                                 }
-                                .padding(.horizontal)
-                                .padding(.vertical, 8)
                             }
-                            .tag(pageIndex)
+                            .padding(.horizontal)
+                            .padding(.top, 8)
+                            .padding(.bottom, 4)
+
+                            TabView(selection: $currentPage) {
+                                ForEach(0..<totalPages, id: \.self) { page in
+                                    ScrollView {
+                                        LazyVStack(spacing: 10) {
+                                            if page == 0 {
+                                                NavigationLink {
+                                                    DayScoreDetailView(viewModel: viewModel)
+                                                } label: {
+                                                    DayScoreCard(viewModel: viewModel)
+                                                }
+                                                .buttonStyle(.plain)
+                                            }
+
+                                            ForEach(tasksForPage(page)) { task in
+                                                NavigationLink {
+                                                    TaskDetailView(task: task)
+                                                } label: {
+                                                    StatsTaskCard(viewModel: viewModel, task: task)
+                                                }
+                                                .buttonStyle(.plain)
+                                            }
+                                        }
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 8)
+                                    }
+                                    .tag(page)
+                                }
+                            }
+                            .tabViewStyle(.page(indexDisplayMode: .never))
+                        }
+                        .onAppear { calculateTasksPerPage(height: geo.size.height) }
+                        .onChange(of: geo.size.height) { _, newHeight in
+                            calculateTasksPerPage(height: newHeight)
                         }
                     }
-                    .tabViewStyle(.page(indexDisplayMode: taskPages.count > 1 ? .always : .never))
-                    .indexViewStyle(.page(backgroundDisplayMode: .always))
+                    .background(Color(.systemGroupedBackground))
                 }
             }
-            .navigationTitle("Stats")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
         }
         .onAppear {
             viewModel.loadTasks()
@@ -57,38 +123,28 @@ struct StatsView: View {
     }
 }
 
-// New card component for paginated stats
 struct StatsTaskCard: View {
     let viewModel: StatsViewModel
     let task: Task
 
     var body: some View {
         VStack(spacing: 8) {
-            // Header with task name and icon
             HStack(spacing: 8) {
-                TaskTypeIcon(taskType: task.taskType, size: 16)
+                TaskTypeIcon(taskType: task.taskType, size: 18)
 
                 Text(task.name)
-                    .font(.subheadline)
+                    .font(.body)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
             }
 
-            // Quick stats
             HStack(spacing: 8) {
-                QuickStatItem(
-                    icon: "flame.fill",
-                    value: "\(task.currentStreak())",
-                    label: "Streak",
-                    color: .orange
-                )
-
                 QuickStatItem(
                     icon: "arrow.up.circle.fill",
                     value: "\(task.comebackCount())",
@@ -98,17 +154,76 @@ struct StatsTaskCard: View {
 
                 QuickStatItem(
                     icon: "percent",
-                    value: Formatting.formatPercentage(viewModel.getRecoveryRatio(for: task)),
-                    label: "Recovery",
+                    value: viewModel.getResilienceIndex(for: task).map { Formatting.formatPercentage($0) } ?? "—",
+                    label: "Resilience",
                     color: .blue
+                )
+
+                QuickStatItem(
+                    icon: "flame.fill",
+                    value: "\(task.currentStreak())",
+                    label: "Streak",
+                    color: .orange
                 )
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.secondarySystemGroupedBackground))
+        )
+    }
+}
+
+struct DayScoreCard: View {
+    let viewModel: StatsViewModel
+
+    var body: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(.yellow)
+
+                Text("Day Score")
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+
+            HStack(spacing: 8) {
+                QuickStatItem(
+                    icon: "arrow.up.circle.fill",
+                    value: "\(viewModel.dayScoreComebackCount())",
+                    label: "Comeback",
+                    color: .green
+                )
+
+                QuickStatItem(
+                    icon: "percent",
+                    value: viewModel.dayScoreResilienceIndex().map { Formatting.formatPercentage($0) } ?? "—",
+                    label: "Resilience",
+                    color: .blue
+                )
+
+                QuickStatItem(
+                    icon: "flame.fill",
+                    value: "\(viewModel.dayScoreCurrentStreak())",
+                    label: "Streak",
+                    color: .orange
+                )
+            }
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.secondarySystemGroupedBackground))
         )
     }
 }
@@ -127,20 +242,21 @@ struct QuickStatItem: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(value)
-                    .font(.subheadline)
+                    .font(.callout)
                     .fontWeight(.bold)
+                    .fontDesign(.rounded)
                     .foregroundColor(.primary)
 
                 Text(label)
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundColor(.secondary)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 4)
         .padding(.horizontal, 6)
-        .background(color.opacity(0.1))
-        .cornerRadius(6)
+        .background(Color(.tertiarySystemGroupedBackground))
+        .cornerRadius(8)
     }
 }
 
@@ -150,7 +266,6 @@ struct StatsCardsView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            // First row: Streaks
             HStack(spacing: 12) {
                 StatCard(
                     title: "Current Streak",
@@ -177,7 +292,6 @@ struct StatsCardsView: View {
                 )
             }
 
-            // Second row: Completion Rates
             HStack(spacing: 12) {
                 StatCard(
                     title: "7-Day Rate",
@@ -226,6 +340,7 @@ struct StatCard: View {
             Text(value)
                 .font(.title)
                 .fontWeight(.bold)
+                .fontDesign(.rounded)
 
             Text(title)
                 .font(.caption)
@@ -233,7 +348,7 @@ struct StatCard: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(color.opacity(0.1))
+        .background(Color(.secondarySystemGroupedBackground))
         .cornerRadius(12)
     }
 }
@@ -281,7 +396,7 @@ struct WeekChartView: View {
                 }
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(Color(.secondarySystemGroupedBackground))
             .cornerRadius(12)
             .padding(.horizontal)
         }

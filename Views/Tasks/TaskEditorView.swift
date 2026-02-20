@@ -19,7 +19,7 @@ struct TaskEditorView: View {
     @State private var selectedUnit: String = "None"
     @State private var customUnit: String = ""
     @State private var showCustomUnit: Bool = false
-    @State private var selectedWorkoutType: String = "None"
+    @State private var selectedWorkoutType: String = HealthKitManager.exerciseMinutesKey
     @State private var useHealthKit: Bool = false
     @State private var usePushFitPro: Bool = false
     @State private var selectedIcon: String? = nil
@@ -87,27 +87,6 @@ struct TaskEditorView: View {
                 Section("Task Details") {
                     TextField("Task Name", text: $name)
                         .textInputAutocapitalization(.words)
-
-                    // Icon picker
-                    Button {
-                        showingIconPicker = true
-                    } label: {
-                        HStack {
-                            Text("Icon")
-                                .foregroundColor(.primary)
-                            Spacer()
-                            if let icon = selectedIcon {
-                                Image(systemName: icon)
-                                    .foregroundColor(.blue)
-                            } else {
-                                Text("None")
-                                    .foregroundColor(.secondary)
-                            }
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
 
                     Picker("Type", selection: $selectedType) {
                         ForEach(TaskType.allCases, id: \.self) { type in
@@ -177,35 +156,23 @@ struct TaskEditorView: View {
                 }
 
                 // App Integration section
-                if selectedType == .time || selectedType == .count {
+                if selectedType == .time && healthKitManager.isHealthKitAvailable {
                     Section {
-                        // HealthKit for time tasks
-                        if selectedType == .time && healthKitManager.isHealthKitAvailable {
-                            Toggle("Fitness (HealthKit)", isOn: $useHealthKit)
+                        Toggle("Fitness (HealthKit)", isOn: $useHealthKit)
 
-                            if useHealthKit {
-                                Picker("Workout Type", selection: $selectedWorkoutType) {
-                                    Text("All Workouts").tag("None")
-                                    ForEach(healthKitManager.availableWorkoutTypes, id: \.name) { workout in
-                                        Text(workout.name).tag(workout.name)
-                                    }
+                        if useHealthKit {
+                            Picker("Workout Type", selection: $selectedWorkoutType) {
+                                Text("Exercise Minutes (Ring)").tag(HealthKitManager.exerciseMinutesKey)
+                                Text("All Workouts").tag("None")
+                                ForEach(healthKitManager.availableWorkoutTypes, id: \.name) { workout in
+                                    Text(workout.name).tag(workout.name)
                                 }
                             }
                         }
-
-                        // PushFit Pro for count tasks
-                        if selectedType == .count {
-                            Toggle("PushFit Pro", isOn: $usePushFitPro)
-                        }
-
                     } header: {
                         Text("App Integration")
                     } footer: {
-                        if selectedType == .time {
-                            Text("Automatically sync workout data from other fitness apps. You'll be asked for permission on first use.")
-                        } else {
-                            Text("Sync rep counts from PushFit Pro. Make sure to enable data sharing in PushFit Pro settings.")
-                        }
+                        Text("Automatically sync workout data from other fitness apps. You'll be asked for permission on first use.")
                     }
                 }
 
@@ -302,7 +269,7 @@ struct TaskEditorView: View {
         // Determine the HealthKit workout type to save
         var workoutTypeToSave: String? = nil
         if selectedType == .time && useHealthKit {
-            workoutTypeToSave = selectedWorkoutType != "None" ? selectedWorkoutType : "All"
+            workoutTypeToSave = selectedWorkoutType == "None" ? HealthKitManager.allWorkoutsKey : selectedWorkoutType
         }
 
         // Determine PushFit Pro integration

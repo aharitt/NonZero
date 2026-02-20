@@ -32,9 +32,9 @@ struct CalendarHeatmapView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Last \(dates.count) days - Press to edit")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            Text("LAST \(dates.count) DAYS — PRESS TO EDIT")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: columns), spacing: spacing) {
                 ForEach(dates, id: \.self) { date in
@@ -56,7 +56,7 @@ struct CalendarHeatmapView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color(.secondarySystemGroupedBackground))
         .cornerRadius(12)
         .sheet(item: $selectedDate) { identifiableDate in
             PastEntryEditorSheet(
@@ -128,6 +128,81 @@ struct DayCell: View {
             Text("\(Calendar.current.component(.day, from: date))")
                 .font(.system(size: 10, weight: .medium))
                 .foregroundColor(intensity > 0.5 ? .white : .secondary)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 4)
+                .stroke(date.isToday ? Color.blue : Color.clear, lineWidth: 2)
+        )
+    }
+}
+
+// MARK: - Day Score Heatmap
+
+struct DayScoreHeatmapView: View {
+    let nonZeroDates: Set<Date>
+    let startDate: Date
+    let endDate: Date
+
+    private let columns = 7
+    private let spacing: CGFloat = 4
+
+    init(nonZeroDates: Set<Date>, days: Int = 60) {
+        self.nonZeroDates = nonZeroDates
+        let calendar = Calendar.current
+        self.endDate = calendar.startOfDay(for: Date())
+        self.startDate = calendar.date(byAdding: .day, value: -days + 1, to: endDate)!
+    }
+
+    var dates: [Date] {
+        Calendar.current.datesInRange(from: startDate, to: endDate)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("LAST \(dates.count) DAYS")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: columns), spacing: spacing) {
+                ForEach(dates, id: \.self) { date in
+                    DayScoreDayCell(date: date, isNonZero: nonZeroDates.contains(date))
+                }
+            }
+
+            HStack {
+                Text(startDate.shortDate)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                Spacer()
+                Text(endDate.shortDate)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding()
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(12)
+    }
+}
+
+struct DayScoreDayCell: View {
+    let date: Date
+    let isNonZero: Bool
+
+    var color: Color {
+        isNonZero ? Color.green : Color.gray.opacity(0.1)
+    }
+
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .fill(color)
+                .aspectRatio(1, contentMode: .fit)
+                .cornerRadius(4)
+
+            Text("\(Calendar.current.component(.day, from: date))")
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(isNonZero ? .white : .secondary)
         }
         .overlay(
             RoundedRectangle(cornerRadius: 4)
