@@ -66,16 +66,33 @@ struct OnboardingView: View {
 
             Spacer()
 
-            Button {
-                onComplete()
-            } label: {
-                Text("Get Started")
-                    .frame(maxWidth: .infinity)
+            VStack(spacing: 12) {
+                Button {
+                    onComplete()
+                } label: {
+                    Text("Get Started")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.green)
+                .controlSize(.large)
+                .buttonBorderShape(.capsule)
+
+                Button {
+                    if let context = DataStore.shared.context {
+                        SeedData.loadSampleData(in: context)
+                        NotificationCenter.default.post(name: .refreshBadge, object: nil)
+                    }
+                    onComplete()
+                } label: {
+                    Text("Try with Sample Data")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .tint(.blue)
+                .controlSize(.large)
+                .buttonBorderShape(.capsule)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(.green)
-            .controlSize(.large)
-            .buttonBorderShape(.capsule)
             .padding(.horizontal, 32)
             .padding(.bottom, 48)
         }

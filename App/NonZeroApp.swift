@@ -34,14 +34,22 @@ struct ContentView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
     var body: some View {
-        if !hasSeenOnboarding {
-            OnboardingView {
-                withAnimation {
-                    hasSeenOnboarding = true
+        Group {
+            if !hasSeenOnboarding {
+                OnboardingView {
+                    withAnimation {
+                        hasSeenOnboarding = true
+                    }
                 }
+            } else {
+                mainTabView
             }
-        } else {
-            mainTabView
+        }
+        .onAppear {
+            if !hasInitialized {
+                initializeDataStore()
+                hasInitialized = true
+            }
         }
     }
 
@@ -69,16 +77,8 @@ struct ContentView: View {
                 }
         }
         .onAppear {
-            if !hasInitialized {
-                initializeDataStore()
-                // Optionally seed data for testing
-                // SeedData.createSampleData(in: modelContext)
-                hasInitialized = true
-
-                // Notify all ViewModels to reload now that DataStore is ready
-                // (child onAppear fires before parent, so initial loads got nil context)
-                NotificationCenter.default.post(name: .refreshBadge, object: nil)
-            }
+            // Notify all ViewModels to reload now that DataStore is ready
+            NotificationCenter.default.post(name: .refreshBadge, object: nil)
         }
         .task {
             // Request badge authorization

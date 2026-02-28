@@ -126,6 +126,20 @@ struct SettingsView: View {
 
                 Section {
                     NavigationLink {
+                        HealthIntegrationView()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "heart.fill")
+                                .foregroundColor(.red)
+                                .frame(width: 24)
+                            Text("Health Integration")
+                                .font(.body)
+                        }
+                    }
+                }
+
+                Section {
+                    NavigationLink {
                         FeedbackView()
                     } label: {
                         HStack(spacing: 12) {
@@ -188,6 +202,24 @@ struct SettingsView: View {
                                 .foregroundColor(.indigo)
                                 .frame(width: 24)
                             Text("Restore Backup")
+                                .font(.body)
+                                .foregroundColor(.primary)
+                        }
+                    }
+
+                    Button {
+                        if let context = dataStore.context {
+                            SeedData.loadSampleData(in: context)
+                            NotificationCenter.default.post(name: .refreshBadge, object: nil)
+                            importMessage = "Sample data loaded successfully"
+                            showingImportAlert = true
+                        }
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "sparkles")
+                                .foregroundColor(.purple)
+                                .frame(width: 24)
+                            Text("Load Sample Data")
                                 .font(.body)
                                 .foregroundColor(.primary)
                         }
@@ -744,6 +776,83 @@ struct FeedbackView: View {
         } else {
             showingMailError = true
         }
+    }
+}
+
+struct HealthIntegrationView: View {
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Text("NonZero uses Apple HealthKit to help you track fitness-related tasks automatically.")
+                    .font(.body)
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("What We Access")
+                        .font(.headline)
+
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "figure.run")
+                            .foregroundColor(.green)
+                            .frame(width: 24)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Workout Data")
+                                .font(.body)
+                                .fontWeight(.medium)
+                            Text("Duration and type of workouts recorded in the Health app or other fitness apps.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "flame.fill")
+                            .foregroundColor(.orange)
+                            .frame(width: 24)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Exercise Minutes")
+                                .font(.body)
+                                .fontWeight(.medium)
+                            Text("Daily exercise minutes from your Activity rings to automatically log time-based tasks.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("How It Works")
+                        .font(.headline)
+
+                    Text("When you create a time-based task and enable HealthKit integration, NonZero reads your workout data to automatically update your daily progress. This helps you track fitness habits without manual entry.")
+                        .font(.body)
+
+                    Text("You can enable or disable HealthKit for each task individually in the task editor.")
+                        .font(.body)
+                }
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Your Privacy")
+                        .font(.headline)
+
+                    Text("NonZero only reads health data — it never writes to or modifies your Health records. All data stays on your device and is never sent to any server.")
+                        .font(.body)
+
+                    Button {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Label("Manage Health Permissions", systemImage: "gear")
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(24)
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("Health Integration")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

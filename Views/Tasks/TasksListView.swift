@@ -33,11 +33,25 @@ struct TasksListView: View {
         NavigationStack {
             Group {
                 if viewModel.tasks.isEmpty {
-                    ContentUnavailableView(
-                        "No Tasks",
-                        systemImage: "checklist",
-                        description: Text("Add your first task to get started")
-                    )
+                    VStack(spacing: 16) {
+                        ContentUnavailableView(
+                            "No Tasks",
+                            systemImage: "checklist",
+                            description: Text("Add your first task to get started")
+                        )
+
+                        Button {
+                            if let context = DataStore.shared.context {
+                                SeedData.loadSampleData(in: context)
+                                viewModel.loadTasks()
+                                NotificationCenter.default.post(name: .refreshBadge, object: nil)
+                            }
+                        } label: {
+                            Label("Try with Sample Data", systemImage: "sparkles")
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.blue)
+                    }
                 } else {
                     GeometryReader { geo in
                         VStack(spacing: 0) {
