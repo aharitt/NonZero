@@ -13,16 +13,6 @@ struct ShareableFile: Identifiable {
 
 struct SettingsView: View {
     @State private var settings = SettingsManager.shared
-    @State private var showingResetConfirmation = false
-    @State private var shareFile: ShareableFile?
-    @State private var showingImportPicker = false
-    @State private var importMode: ImportMode = .tasks
-    @State private var showingImportAlert = false
-    @State private var importMessage = ""
-    @State private var showingBackupRestoreConfirmation = false
-    @State private var pendingBackupURL: URL?
-
-    private let dataStore = DataStore.shared
 
     var body: some View {
         NavigationStack {
@@ -153,86 +143,14 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Button {
-                        exportTasks()
+                    NavigationLink {
+                        ManageDataView()
                     } label: {
                         HStack(spacing: 12) {
-                            Image(systemName: "square.and.arrow.up")
-                                .foregroundColor(.blue)
-                                .frame(width: 24)
-                            Text("Export Tasks")
-                                .font(.body)
-                                .foregroundColor(.primary)
-                        }
-                    }
-
-                    Button {
-                        importMode = .tasks
-                        showingImportPicker = true
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "square.and.arrow.down")
-                                .foregroundColor(.green)
-                                .frame(width: 24)
-                            Text("Import Tasks")
-                                .font(.body)
-                                .foregroundColor(.primary)
-                        }
-                    }
-
-                    Button {
-                        exportFullBackup()
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "arrow.up.doc")
+                            Image(systemName: "externaldrive")
                                 .foregroundColor(.indigo)
                                 .frame(width: 24)
-                            Text("Export Backup")
-                                .font(.body)
-                                .foregroundColor(.primary)
-                        }
-                    }
-
-                    Button {
-                        importMode = .fullBackup
-                        showingImportPicker = true
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "arrow.down.doc")
-                                .foregroundColor(.indigo)
-                                .frame(width: 24)
-                            Text("Restore Backup")
-                                .font(.body)
-                                .foregroundColor(.primary)
-                        }
-                    }
-
-                    Button {
-                        if let context = dataStore.context {
-                            SeedData.loadSampleData(in: context)
-                            NotificationCenter.default.post(name: .refreshBadge, object: nil)
-                            importMessage = "Sample data loaded successfully"
-                            showingImportAlert = true
-                        }
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "sparkles")
-                                .foregroundColor(.purple)
-                                .frame(width: 24)
-                            Text("Load Sample Data")
-                                .font(.body)
-                                .foregroundColor(.primary)
-                        }
-                    }
-
-                    Button(role: .destructive) {
-                        showingResetConfirmation = true
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "trash")
-                                .foregroundColor(.red)
-                                .frame(width: 24)
-                            Text("Reset All Records")
+                            Text("Manage Data")
                                 .font(.body)
                         }
                     }
@@ -240,60 +158,163 @@ struct SettingsView: View {
 
             }
             }
+            .listSectionSpacing(10)
             .background(Color(.systemGroupedBackground))
             .toolbar(.hidden, for: .navigationBar)
-            .alert("Reset All Records?", isPresented: $showingResetConfirmation) {
-                Button("Cancel", role: .cancel) {}
-                Button("Reset", role: .destructive) {
-                    resetAllRecords()
-                }
-            } message: {
-                Text("This will permanently delete all your logged entries (streaks, progress, history) but keep your task definitions. This action cannot be undone.")
-            }
-            .alert("Restore Backup?", isPresented: $showingBackupRestoreConfirmation) {
-                Button("Cancel", role: .cancel) {
-                    pendingBackupURL = nil
-                }
-                Button("Replace All Data", role: .destructive) {
-                    if let url = pendingBackupURL {
-                        performBackupRestore(url: url)
-                        pendingBackupURL = nil
-                    }
-                }
-            } message: {
-                Text("This will delete all existing tasks and entries, then restore from the backup file. This action cannot be undone.")
-            }
-            .sheet(item: $shareFile) { file in
-                ShareSheet(items: [file.url])
-            }
-            .fileImporter(
-                isPresented: $showingImportPicker,
-                allowedContentTypes: [.json],
-                allowsMultipleSelection: false
-            ) { result in
-                switch importMode {
-                case .tasks:
-                    handleImport(result: result)
-                case .fullBackup:
-                    handleBackupImport(result: result)
-                }
-            }
-            .alert("Import Result", isPresented: $showingImportAlert) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(importMessage)
-            }
         }
     }
+}
 
-    private func resetAllRecords() {
-        dataStore.deleteAllEntries()
+// MARK: - Manage Data View
 
-        // Refresh badge after resetting records
-        NotificationCenter.default.post(name: .refreshBadge, object: nil)
+struct ManageDataView: View {
+    @State private var settings = SettingsManager.shared
+    @State private var showingResetConfirmation = false
+    @State private var shareFile: ShareableFile?
+    @State private var showingImportPicker = false
+    @State private var importMode: ImportMode = .tasks
+    @State private var showingImportAlert = false
+    @State private var importMessage = ""
+    @State private var showingBackupRestoreConfirmation = false
+    @State private var pendingBackupURL: URL?
+
+    private let dataStore = DataStore.shared
+
+    var body: some View {
+        List {
+            Section {
+                Button {
+                    exportTasks()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundColor(.blue)
+                            .frame(width: 24)
+                        Text("Export Tasks")
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    }
+                }
+
+                Button {
+                    importMode = .tasks
+                    showingImportPicker = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "square.and.arrow.down")
+                            .foregroundColor(.green)
+                            .frame(width: 24)
+                        Text("Import Tasks")
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    }
+                }
+
+                Button {
+                    exportFullBackup()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "arrow.up.doc")
+                            .foregroundColor(.indigo)
+                            .frame(width: 24)
+                        Text("Export Backup")
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    }
+                }
+
+                Button {
+                    importMode = .fullBackup
+                    showingImportPicker = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "arrow.down.doc")
+                            .foregroundColor(.indigo)
+                            .frame(width: 24)
+                        Text("Restore Backup")
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
+
+            Section {
+                Button {
+                    if let context = dataStore.context {
+                        SeedData.loadSampleData(in: context)
+                        NotificationCenter.default.post(name: .refreshBadge, object: nil)
+                        importMessage = "Sample data loaded successfully"
+                        showingImportAlert = true
+                    }
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "sparkles")
+                            .foregroundColor(.purple)
+                            .frame(width: 24)
+                        Text("Load Sample Data")
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    }
+                }
+
+                Button(role: .destructive) {
+                    showingResetConfirmation = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "trash")
+                            .foregroundColor(.red)
+                            .frame(width: 24)
+                        Text("Reset All Records")
+                            .font(.body)
+                    }
+                }
+            }
+        }
+        .navigationTitle("Manage Data")
+        .navigationBarTitleDisplayMode(.inline)
+        .alert("Reset All Records?", isPresented: $showingResetConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Reset", role: .destructive) {
+                dataStore.deleteAllEntries()
+                NotificationCenter.default.post(name: .refreshBadge, object: nil)
+            }
+        } message: {
+            Text("This will permanently delete all your logged entries (streaks, progress, history) but keep your task definitions. This action cannot be undone.")
+        }
+        .alert("Restore Backup?", isPresented: $showingBackupRestoreConfirmation) {
+            Button("Cancel", role: .cancel) {
+                pendingBackupURL = nil
+            }
+            Button("Replace All Data", role: .destructive) {
+                if let url = pendingBackupURL {
+                    performBackupRestore(url: url)
+                    pendingBackupURL = nil
+                }
+            }
+        } message: {
+            Text("This will delete all existing tasks and entries, then restore from the backup file. This action cannot be undone.")
+        }
+        .sheet(item: $shareFile) { file in
+            ShareSheet(items: [file.url])
+        }
+        .fileImporter(
+            isPresented: $showingImportPicker,
+            allowedContentTypes: [.json],
+            allowsMultipleSelection: false
+        ) { result in
+            switch importMode {
+            case .tasks:
+                handleImport(result: result)
+            case .fullBackup:
+                handleBackupImport(result: result)
+            }
+        }
+        .alert("Import Result", isPresented: $showingImportAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(importMessage)
+        }
     }
-
-    // MARK: - Task Export/Import
 
     private func exportTasks() {
         let tasks = dataStore.fetchTasks(includeArchived: true)
@@ -314,16 +335,12 @@ struct SettingsView: View {
 
         do {
             let jsonData = try JSONEncoder().encode(exportData)
-
             let tempDir = FileManager.default.temporaryDirectory
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd_HHmmss"
             let timestamp = dateFormatter.string(from: Date())
-            let fileName = "NonZero_Tasks_\(timestamp).json"
-            let fileURL = tempDir.appendingPathComponent(fileName)
-
+            let fileURL = tempDir.appendingPathComponent("NonZero_Tasks_\(timestamp).json")
             try jsonData.write(to: fileURL)
-
             shareFile = ShareableFile(url: fileURL)
         } catch {
             importMessage = "Export failed: \(error.localizedDescription)"
@@ -335,7 +352,6 @@ struct SettingsView: View {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
-
             do {
                 guard url.startAccessingSecurityScopedResource() else {
                     importMessage = "Cannot access file"
@@ -343,13 +359,10 @@ struct SettingsView: View {
                     return
                 }
                 defer { url.stopAccessingSecurityScopedResource() }
-
                 let jsonData = try Data(contentsOf: url)
                 let tasks = try JSONDecoder().decode([ExportableTask].self, from: jsonData)
-
                 for taskData in tasks {
                     guard let taskType = TaskType(rawValue: taskData.taskType) else { continue }
-
                     let task = Task(
                         name: taskData.name,
                         taskType: taskType,
@@ -361,31 +374,24 @@ struct SettingsView: View {
                         icon: taskData.icon,
                         createdAt: taskData.createdAt
                     )
-
                     dataStore.addTask(task)
                 }
-
                 importMessage = "Successfully imported \(tasks.count) task(s)"
                 showingImportAlert = true
             } catch {
                 importMessage = "Import failed: \(error.localizedDescription)"
                 showingImportAlert = true
             }
-
         case .failure(let error):
             importMessage = "Import failed: \(error.localizedDescription)"
             showingImportAlert = true
         }
     }
 
-    // MARK: - Full Backup Export/Import
-
     private func exportFullBackup() {
         let tasks = dataStore.fetchTasks(includeArchived: true)
-
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-
         let backupTasks = tasks.map { task in
             BackupTask(
                 name: task.name,
@@ -400,35 +406,24 @@ struct SettingsView: View {
                 sortOrder: task.sortOrder,
                 isArchived: task.isArchived,
                 entries: task.entries.map { entry in
-                    BackupEntry(
-                        date: entry.date,
-                        value: entry.value,
-                        note: entry.note,
-                        createdAt: entry.createdAt
-                    )
+                    BackupEntry(date: entry.date, value: entry.value, note: entry.note, createdAt: entry.createdAt)
                 }
             )
         }
-
         let backup = FullBackup(
             version: 2,
             exportDate: Date(),
             tasks: backupTasks,
             settings: BackupSettings(dayScoreCriteria: settings.dayScoreCriteria)
         )
-
         do {
             let jsonData = try encoder.encode(backup)
-
             let tempDir = FileManager.default.temporaryDirectory
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd_HHmmss"
             let timestamp = dateFormatter.string(from: Date())
-            let fileName = "NonZero_Backup_\(timestamp).json"
-            let fileURL = tempDir.appendingPathComponent(fileName)
-
+            let fileURL = tempDir.appendingPathComponent("NonZero_Backup_\(timestamp).json")
             try jsonData.write(to: fileURL)
-
             shareFile = ShareableFile(url: fileURL)
         } catch {
             importMessage = "Backup export failed: \(error.localizedDescription)"
@@ -440,17 +435,13 @@ struct SettingsView: View {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
-
             guard url.startAccessingSecurityScopedResource() else {
                 importMessage = "Cannot access file"
                 showingImportAlert = true
                 return
             }
-
-            // Store URL for confirmation, keep security scope open
             pendingBackupURL = url
             showingBackupRestoreConfirmation = true
-
         case .failure(let error):
             importMessage = "Backup import failed: \(error.localizedDescription)"
             showingImportAlert = true
@@ -459,25 +450,16 @@ struct SettingsView: View {
 
     private func performBackupRestore(url: URL) {
         defer { url.stopAccessingSecurityScopedResource() }
-
         do {
             let jsonData = try Data(contentsOf: url)
-
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
-
             let backup = try decoder.decode(FullBackup.self, from: jsonData)
-
-            // Delete all existing data
             dataStore.deleteAllData()
-
-            // Restore tasks and entries
             var restoredTasks = 0
             var restoredEntries = 0
-
             for backupTask in backup.tasks {
                 guard let taskType = TaskType(rawValue: backupTask.taskType) else { continue }
-
                 let task = Task(
                     name: backupTask.name,
                     taskType: taskType,
@@ -491,10 +473,8 @@ struct SettingsView: View {
                     isArchived: backupTask.isArchived,
                     sortOrder: backupTask.sortOrder
                 )
-
                 dataStore.addTask(task)
                 restoredTasks += 1
-
                 for backupEntry in backupTask.entries {
                     let entry = Entry(
                         task: task,
@@ -507,14 +487,10 @@ struct SettingsView: View {
                     restoredEntries += 1
                 }
             }
-
-            // Restore settings
             if let backupSettings = backup.settings {
                 settings.dayScoreCriteria = backupSettings.dayScoreCriteria
             }
-
             NotificationCenter.default.post(name: .refreshBadge, object: nil)
-
             importMessage = "Restored \(restoredTasks) task(s) and \(restoredEntries) entry(ies)"
             showingImportAlert = true
         } catch {
