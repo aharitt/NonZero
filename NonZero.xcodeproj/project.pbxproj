@@ -47,6 +47,7 @@
 		C1AFD93B2F3EF50F0090C36E /* DeviceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD93A2F3EF50F0090C36E /* DeviceHelper.swift */; };
 		C1AFD9612F3FE4170090C36E /* TimerActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */; };
 		C1D392CD2F466E6E00C3C803 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D392CB2F466E6E00C3C803 /* OnboardingView.swift */; };
+		C1DE31F02F54271500CA146D /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DE31EF2F54271500CA146D /* LanguageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +119,7 @@
 		C1AFD9462F3FE35E0090C36E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerActivityAttributes.swift; sourceTree = "<group>"; };
 		C1D392CB2F466E6E00C3C803 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		C1DE31EF2F54271500CA146D /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -233,6 +235,7 @@
 		C10245ED2F3A890600C417EA /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				C1DE31EF2F54271500CA146D /* LanguageManager.swift */,
 				C1AFD93A2F3EF50F0090C36E /* DeviceHelper.swift */,
 				C1AFD9382F3EF5000090C36E /* AppIconManager.swift */,
 				C1AFD92F2F3BD9B10090C36E /* SoundManager.swift */,
@@ -458,6 +461,7 @@
 				C1AFD9322F3BE7EB0090C36E /* ReorderTasksView.swift in Sources */,
 				C1AFD9392F3EF5000090C36E /* AppIconManager.swift in Sources */,
 				C10246072F3A890700C417EA /* TaskEditorView.swift in Sources */,
+				C1DE31F02F54271500CA146D /* LanguageManager.swift in Sources */,
 				C1AFD9302F3BD9B10090C36E /* SoundManager.swift in Sources */,
 				C10246082F3A890700C417EA /* SeedData.swift in Sources */,
 				C10246092F3A890700C417EA /* NonZeroBadge.swift in Sources */,

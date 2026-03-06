@@ -38,16 +38,16 @@ struct TodayView: View {
             Group {
                 if viewModel.tasks.isEmpty {
                     ContentUnavailableView(
-                        "No Tasks Yet",
+                        loc("No Tasks Yet"),
                         systemImage: "checklist",
-                        description: Text("Add tasks in the Tasks tab to start tracking")
+                        description: Text(loc("Add tasks in the Tasks tab to start tracking"))
                     )
                 } else {
                     GeometryReader { geo in
                         VStack(spacing: 0) {
                             // Title row with pagination arrows and sync
                             HStack(alignment: .firstTextBaseline) {
-                                Text(viewModel.isNonZeroDay ? "Today is Non-Zero" : "Make Today Non-Zero")
+                                Text(viewModel.isNonZeroDay ? loc("Today is Non-Zero") : loc("Make Today Non-Zero"))
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundStyle(viewModel.isNonZeroDay ? .green : .primary)
@@ -203,7 +203,7 @@ struct TodayTaskCard: View {
     @ViewBuilder
     private var booleanActions: some View {
         if isNonZero {
-            Label("Did It!", systemImage: "checkmark.circle.fill")
+            Label(loc("Did It!"), systemImage: "checkmark.circle.fill")
                 .frame(maxWidth: .infinity)
                 .font(.subheadline)
                 .fontWeight(.semibold)
@@ -213,7 +213,7 @@ struct TodayTaskCard: View {
             Button {
                 onQuickAction(1)
             } label: {
-                Label("Done", systemImage: "checkmark.circle")
+                Label(loc("Done"), systemImage: "checkmark.circle")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -251,7 +251,7 @@ struct TodayTaskCard: View {
             Button {
                 onStopTimer()
             } label: {
-                Label("Stop", systemImage: "stop.fill")
+                Label(loc("Stop"), systemImage: "stop.fill")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)

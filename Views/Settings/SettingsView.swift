@@ -13,12 +13,13 @@ struct ShareableFile: Identifiable {
 
 struct SettingsView: View {
     @State private var settings = SettingsManager.shared
+    @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.english.rawValue
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 HStack {
-                    Text("Settings")
+                    Text(loc("Settings"))
                         .font(.title2)
                         .fontWeight(.bold)
                     Spacer()
@@ -37,7 +38,7 @@ struct SettingsView: View {
                             Image(systemName: "hand.wave.fill")
                                 .foregroundColor(.blue)
                                 .frame(width: 24)
-                            Text("Welcome Screen")
+                            Text(loc("Welcome Screen"))
                                 .font(.body)
                                 .foregroundColor(.primary)
                         }
@@ -50,7 +51,7 @@ struct SettingsView: View {
                             Image(systemName: "sparkles")
                                 .foregroundColor(.green)
                                 .frame(width: 24)
-                            Text("The NonZero Principle")
+                            Text(loc("The NonZero Principle"))
                                 .font(.body)
                         }
                     }
@@ -62,7 +63,7 @@ struct SettingsView: View {
                             Image(systemName: "arrow.uturn.up.circle.fill")
                                 .foregroundColor(.blue)
                                 .frame(width: 24)
-                            Text("Resilience Index")
+                            Text(loc("Resilience Index"))
                                 .font(.body)
                         }
                     }
@@ -74,7 +75,7 @@ struct SettingsView: View {
                             Image(systemName: "app.badge")
                                 .foregroundColor(.red)
                                 .frame(width: 24)
-                            Text("Show Badge")
+                            Text(loc("Show Badge"))
                                 .font(.body)
                         }
                     }
@@ -84,7 +85,7 @@ struct SettingsView: View {
                             Image(systemName: "speaker.wave.2")
                                 .foregroundColor(.blue)
                                 .frame(width: 24)
-                            Text("Sounds")
+                            Text(loc("Sounds"))
                                 .font(.body)
                         }
                     }
@@ -93,7 +94,7 @@ struct SettingsView: View {
                         Image(systemName: "chart.pie")
                             .foregroundColor(.orange)
                             .frame(width: 24)
-                        Text("Day Score Criteria")
+                        Text(loc("Day Score Criteria"))
                             .font(.body)
                         Spacer()
                         Text("\(settings.dayScoreCriteria)%")
@@ -122,8 +123,26 @@ struct SettingsView: View {
                             Image(systemName: "heart.fill")
                                 .foregroundColor(.red)
                                 .frame(width: 24)
-                            Text("Health Integration")
+                            Text(loc("Health Integration"))
                                 .font(.body)
+                        }
+                    }
+                }
+
+                Section {
+                    HStack(spacing: 12) {
+                        Image(systemName: "globe")
+                            .foregroundColor(.blue)
+                            .frame(width: 24)
+                        Picker(loc("Language"), selection: Binding(
+                            get: { AppLanguage(rawValue: appLanguage) ?? .english },
+                            set: { language in
+                                LanguageManager.shared.setLanguage(language)
+                            }
+                        )) {
+                            ForEach(AppLanguage.allCases, id: \.self) { language in
+                                Text(language.displayName).tag(language)
+                            }
                         }
                     }
                 }
@@ -136,7 +155,7 @@ struct SettingsView: View {
                             Image(systemName: "envelope.fill")
                                 .foregroundColor(.orange)
                                 .frame(width: 24)
-                            Text("Send Feedback")
+                            Text(loc("Send Feedback"))
                                 .font(.body)
                         }
                     }
@@ -150,7 +169,7 @@ struct SettingsView: View {
                             Image(systemName: "externaldrive")
                                 .foregroundColor(.indigo)
                                 .frame(width: 24)
-                            Text("Manage Data")
+                            Text(loc("Manage Data"))
                                 .font(.body)
                         }
                     }
@@ -190,7 +209,7 @@ struct ManageDataView: View {
                         Image(systemName: "square.and.arrow.up")
                             .foregroundColor(.blue)
                             .frame(width: 24)
-                        Text("Export Tasks")
+                        Text(loc("Export Tasks"))
                             .font(.body)
                             .foregroundColor(.primary)
                     }
@@ -204,7 +223,7 @@ struct ManageDataView: View {
                         Image(systemName: "square.and.arrow.down")
                             .foregroundColor(.green)
                             .frame(width: 24)
-                        Text("Import Tasks")
+                        Text(loc("Import Tasks"))
                             .font(.body)
                             .foregroundColor(.primary)
                     }
@@ -217,7 +236,7 @@ struct ManageDataView: View {
                         Image(systemName: "arrow.up.doc")
                             .foregroundColor(.indigo)
                             .frame(width: 24)
-                        Text("Export Backup")
+                        Text(loc("Export Backup"))
                             .font(.body)
                             .foregroundColor(.primary)
                     }
@@ -231,7 +250,7 @@ struct ManageDataView: View {
                         Image(systemName: "arrow.down.doc")
                             .foregroundColor(.indigo)
                             .frame(width: 24)
-                        Text("Restore Backup")
+                        Text(loc("Restore Backup"))
                             .font(.body)
                             .foregroundColor(.primary)
                     }
@@ -243,7 +262,7 @@ struct ManageDataView: View {
                     if let context = dataStore.context {
                         SeedData.loadSampleData(in: context)
                         NotificationCenter.default.post(name: .refreshBadge, object: nil)
-                        importMessage = "Sample data loaded successfully"
+                        importMessage = loc("Sample data loaded successfully")
                         showingImportAlert = true
                     }
                 } label: {
@@ -251,7 +270,7 @@ struct ManageDataView: View {
                         Image(systemName: "sparkles")
                             .foregroundColor(.purple)
                             .frame(width: 24)
-                        Text("Load Sample Data")
+                        Text(loc("Load Sample Data"))
                             .font(.body)
                             .foregroundColor(.primary)
                     }
@@ -264,35 +283,35 @@ struct ManageDataView: View {
                         Image(systemName: "trash")
                             .foregroundColor(.red)
                             .frame(width: 24)
-                        Text("Reset All Records")
+                        Text(loc("Reset All Records"))
                             .font(.body)
                     }
                 }
             }
         }
-        .navigationTitle("Manage Data")
+        .navigationTitle(loc("Manage Data"))
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Reset All Records?", isPresented: $showingResetConfirmation) {
-            Button("Cancel", role: .cancel) {}
-            Button("Reset", role: .destructive) {
+        .alert(loc("Reset All Records?"), isPresented: $showingResetConfirmation) {
+            Button(loc("Cancel"), role: .cancel) {}
+            Button(loc("Reset"), role: .destructive) {
                 dataStore.deleteAllEntries()
                 NotificationCenter.default.post(name: .refreshBadge, object: nil)
             }
         } message: {
-            Text("This will permanently delete all your logged entries (streaks, progress, history) but keep your task definitions. This action cannot be undone.")
+            Text(loc("This will permanently delete all your logged entries (streaks, progress, history) but keep your task definitions. This action cannot be undone."))
         }
-        .alert("Restore Backup?", isPresented: $showingBackupRestoreConfirmation) {
-            Button("Cancel", role: .cancel) {
+        .alert(loc("Restore Backup?"), isPresented: $showingBackupRestoreConfirmation) {
+            Button(loc("Cancel"), role: .cancel) {
                 pendingBackupURL = nil
             }
-            Button("Replace All Data", role: .destructive) {
+            Button(loc("Replace All Data"), role: .destructive) {
                 if let url = pendingBackupURL {
                     performBackupRestore(url: url)
                     pendingBackupURL = nil
                 }
             }
         } message: {
-            Text("This will delete all existing tasks and entries, then restore from the backup file. This action cannot be undone.")
+            Text(loc("This will delete all existing tasks and entries, then restore from the backup file. This action cannot be undone."))
         }
         .sheet(item: $shareFile) { file in
             ShareSheet(items: [file.url])
@@ -309,8 +328,8 @@ struct ManageDataView: View {
                 handleBackupImport(result: result)
             }
         }
-        .alert("Import Result", isPresented: $showingImportAlert) {
-            Button("OK", role: .cancel) {}
+        .alert(loc("Import Result"), isPresented: $showingImportAlert) {
+            Button(loc("OK"), role: .cancel) {}
         } message: {
             Text(importMessage)
         }
@@ -354,7 +373,7 @@ struct ManageDataView: View {
             guard let url = urls.first else { return }
             do {
                 guard url.startAccessingSecurityScopedResource() else {
-                    importMessage = "Cannot access file"
+                    importMessage = loc("Cannot access file")
                     showingImportAlert = true
                     return
                 }
@@ -562,24 +581,24 @@ struct NonZeroPrincipleView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                Text("The rule is simple.")
+                Text(loc("The rule is simple."))
                     .font(.title2)
                     .fontWeight(.bold)
 
-                Text("Do not let a day become zero.")
+                Text(loc("Do not let a day become zero."))
                     .font(.title3)
                     .foregroundColor(.green)
                     .fontWeight(.semibold)
 
-                Text("You don't have to be perfect.\nYou don't have to complete everything.")
+                Text(loc("You don't have to be perfect.\nYou don't have to complete everything."))
                     .font(.body)
                     .fontWeight(.medium)
 
-                Text("Just non-zero. \n1 page, 1 push-up, 1 min conversation...")
+                Text(loc("Just non-zero. \n1 page, 1 push-up, 1 min conversation..."))
                     .font(.body)
                     .fontWeight(.medium)
 
-                Text("You may have a zero-day. \nNo worries. Come back. Start small.")
+                Text(loc("You may have a zero-day. \nNo worries. Come back. Start small."))
                     .font(.body)
                     .fontWeight(.medium)
             }
@@ -587,7 +606,7 @@ struct NonZeroPrincipleView: View {
             .padding(24)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("The NonZero Principle")
+        .navigationTitle(loc("The NonZero Principle"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -596,41 +615,41 @@ struct ResilienceIndexView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                Text("Resilience is not about never struggling.\nIt is about responding to struggle by returning.")
+                Text(loc("Resilience is not about never struggling.\nIt is about responding to struggle by returning."))
                     .font(.body)
                     .fontWeight(.bold)
 
-                Text("In psychology, resilience is often described as the ability to bounce back from setbacks and adapt after difficulty. The Resilience Index reflects this idea in behavioral form. It measures how consistently you resume your efforts after missing days.")
+                Text(loc("In psychology, resilience is often described as the ability to bounce back from setbacks and adapt after difficulty. The Resilience Index reflects this idea in behavioral form. It measures how consistently you resume your efforts after missing days."))
                     .font(.body)
 
-                Text("When you miss a day and return, that is resilience. When you miss several days and still return, that is resilience too — because resilience is not perfection, but persistence.")
+                Text(loc("When you miss a day and return, that is resilience. When you miss several days and still return, that is resilience too — because resilience is not perfection, but persistence."))
                     .font(.body)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("The index considers two patterns:")
+                    Text(loc("The index considers two patterns:"))
                         .font(.body)
                         .fontWeight(.medium)
 
                     HStack(alignment: .top, spacing: 8) {
                         Text("•")
-                        Text("How reliably you return")
+                        Text(loc("How reliably you return"))
                     }
                     .font(.body)
 
                     HStack(alignment: .top, spacing: 8) {
                         Text("•")
-                        Text("How quickly you resume")
+                        Text(loc("How quickly you resume"))
                     }
                     .font(.body)
                 }
 
-                Text("Recent comebacks carry more weight than distant ones, because resilience is something practiced in the present. Long gaps do not erase your resilience. They simply make your return more meaningful.")
+                Text(loc("Recent comebacks carry more weight than distant ones, because resilience is something practiced in the present. Long gaps do not erase your resilience. They simply make your return more meaningful."))
                     .font(.body)
 
-                Text("This index is not a clinical assessment or a personality score. It is a reflection of your pattern of persistence over time. In that sense, it is closely related to what researchers call \"grit\" — the capacity to continue showing up for what matters.")
+                Text(loc("This index is not a clinical assessment or a personality score. It is a reflection of your pattern of persistence over time. In that sense, it is closely related to what researchers call \"grit\" — the capacity to continue showing up for what matters."))
                     .font(.body)
 
-                Text("As long as you refuse to drop and keep returning, your resilience remains active.")
+                Text(loc("As long as you refuse to drop and keep returning, your resilience remains active."))
                     .font(.body)
                     .fontWeight(.medium)
             }
@@ -638,7 +657,7 @@ struct ResilienceIndexView: View {
             .padding(24)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("Resilience Index")
+        .navigationTitle(loc("Resilience Index"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -667,9 +686,9 @@ struct FeedbackView: View {
                 TextEditor(text: $feedbackText)
                     .frame(minHeight: 150)
             } header: {
-                Text("Your Feedback")
+                Text(loc("Your Feedback"))
             } footer: {
-                Text("Tell us what you like, what could be better, or report a bug.")
+                Text(loc("Tell us what you like, what could be better, or report a bug."))
             }
 
             Section {
@@ -678,7 +697,7 @@ struct FeedbackView: View {
                 } label: {
                     HStack {
                         Spacer()
-                        Label("Send via Email", systemImage: "paperplane.fill")
+                        Label(loc("Send via Email"), systemImage: "paperplane.fill")
                             .fontWeight(.semibold)
                         Spacer()
                     }
@@ -688,7 +707,7 @@ struct FeedbackView: View {
 
             Section {
                 HStack {
-                    Text("Email")
+                    Text(loc("Email"))
                         .foregroundColor(.secondary)
                     Spacer()
                     Text(feedbackEmail)
@@ -697,7 +716,7 @@ struct FeedbackView: View {
                 }
 
                 HStack {
-                    Text("App Version")
+                    Text(loc("App Version"))
                         .foregroundColor(.secondary)
                     Spacer()
                     Text(appVersion)
@@ -706,7 +725,7 @@ struct FeedbackView: View {
                 }
 
                 HStack {
-                    Text("Device")
+                    Text(loc("Device"))
                         .foregroundColor(.secondary)
                     Spacer()
                     Text(deviceInfo)
@@ -714,23 +733,23 @@ struct FeedbackView: View {
                         .font(.caption)
                 }
             } header: {
-                Text("Info")
+                Text(loc("Info"))
             }
         }
-        .navigationTitle("Send Feedback")
+        .navigationTitle(loc("Send Feedback"))
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Cannot Send Email", isPresented: $showingMailError) {
-            Button("Copy Email Address") {
+        .alert(loc("Cannot Send Email"), isPresented: $showingMailError) {
+            Button(loc("Copy Email Address")) {
                 UIPasteboard.general.string = feedbackEmail
             }
-            Button("OK", role: .cancel) {}
+            Button(loc("OK"), role: .cancel) {}
         } message: {
-            Text("Your device is not configured to send email. You can copy the email address and send feedback manually to \(feedbackEmail).")
+            Text(loc("Your device is not configured to send email. You can copy the email address and send feedback manually."))
         }
-        .alert("Thank You!", isPresented: $showingSentConfirmation) {
-            Button("OK", role: .cancel) {}
+        .alert(loc("Thank You!"), isPresented: $showingSentConfirmation) {
+            Button(loc("OK"), role: .cancel) {}
         } message: {
-            Text("Your feedback email has been prepared. Please send it from your email app.")
+            Text(loc("Your feedback email has been prepared. Please send it from your email app."))
         }
     }
 
@@ -759,11 +778,11 @@ struct HealthIntegrationView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                Text("NonZero uses Apple HealthKit to help you track fitness-related tasks automatically.")
+                Text(loc("NonZero uses Apple HealthKit to help you track fitness-related tasks automatically."))
                     .font(.body)
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("What We Access")
+                    Text(loc("What We Access"))
                         .font(.headline)
 
                     HStack(alignment: .top, spacing: 8) {
@@ -771,10 +790,10 @@ struct HealthIntegrationView: View {
                             .foregroundColor(.green)
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Workout Data")
+                            Text(loc("Workout Data"))
                                 .font(.body)
                                 .fontWeight(.medium)
-                            Text("Duration and type of workouts recorded in the Health app or other fitness apps.")
+                            Text(loc("Duration and type of workouts recorded in the Health app or other fitness apps."))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -785,10 +804,10 @@ struct HealthIntegrationView: View {
                             .foregroundColor(.orange)
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Exercise Minutes")
+                            Text(loc("Exercise Minutes"))
                                 .font(.body)
                                 .fontWeight(.medium)
-                            Text("Daily exercise minutes from your Activity rings to automatically log time-based tasks.")
+                            Text(loc("Daily exercise minutes from your Activity rings to automatically log time-based tasks."))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -796,21 +815,21 @@ struct HealthIntegrationView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("How It Works")
+                    Text(loc("How It Works"))
                         .font(.headline)
 
-                    Text("When you create a time-based task and enable HealthKit integration, NonZero reads your workout data to automatically update your daily progress. This helps you track fitness habits without manual entry.")
+                    Text(loc("When you create a time-based task and enable HealthKit integration, NonZero reads your workout data to automatically update your daily progress. This helps you track fitness habits without manual entry."))
                         .font(.body)
 
-                    Text("You can enable or disable HealthKit for each task individually in the task editor.")
+                    Text(loc("You can enable or disable HealthKit for each task individually in the task editor."))
                         .font(.body)
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Your Privacy")
+                    Text(loc("Your Privacy"))
                         .font(.headline)
 
-                    Text("NonZero only reads health data — it never writes to or modifies your Health records. All data stays on your device and is never sent to any server.")
+                    Text(loc("NonZero only reads health data — it never writes to or modifies your Health records. All data stays on your device and is never sent to any server."))
                         .font(.body)
 
                     Button {
@@ -818,7 +837,7 @@ struct HealthIntegrationView: View {
                             UIApplication.shared.open(url)
                         }
                     } label: {
-                        Label("Manage Health Permissions", systemImage: "gear")
+                        Label(loc("Manage Health Permissions"), systemImage: "gear")
                     }
                     .buttonStyle(.bordered)
                 }
@@ -827,7 +846,7 @@ struct HealthIntegrationView: View {
             .padding(24)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("Health Integration")
+        .navigationTitle(loc("Health Integration"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

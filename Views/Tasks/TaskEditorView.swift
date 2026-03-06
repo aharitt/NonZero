@@ -70,8 +70,8 @@ struct TaskEditorView: View {
 
     var title: String {
         switch mode {
-        case .add: return "New Task"
-        case .edit: return "Edit Task"
+        case .add: return loc("New Task")
+        case .edit: return loc("Edit Task")
         }
     }
 
@@ -84,11 +84,11 @@ struct TaskEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Task Details") {
-                    TextField("Task Name", text: $name)
+                Section(loc("Task Details")) {
+                    TextField(loc("Task Name"), text: $name)
                         .textInputAutocapitalization(.words)
 
-                    Picker("Type", selection: $selectedType) {
+                    Picker(loc("Type"), selection: $selectedType) {
                         ForEach(TaskType.allCases, id: \.self) { type in
                             Text(type.displayName).tag(type)
                         }
@@ -98,8 +98,8 @@ struct TaskEditorView: View {
 
                 // Unit section (only for count tasks)
                 if selectedType == .count {
-                    Section("Unit") {
-                        Picker("Unit", selection: $selectedUnit) {
+                    Section(loc("Unit")) {
+                        Picker(loc("Unit"), selection: $selectedUnit) {
                             ForEach(predefinedUnits, id: \.self) { unit in
                                 Text(unit).tag(unit)
                             }
@@ -112,7 +112,7 @@ struct TaskEditorView: View {
                         }
 
                         if showCustomUnit {
-                            TextField("Enter custom unit", text: $customUnit)
+                            TextField(loc("Enter custom unit"), text: $customUnit)
                                 .textInputAutocapitalization(.never)
                         }
                     }
@@ -122,7 +122,7 @@ struct TaskEditorView: View {
                 if selectedType != .boolean {
                     Section {
                         HStack {
-                            Text("Minimum")
+                            Text(loc("Minimum"))
                             Spacer()
                             TextField("0", text: $minimumValue)
                                 .keyboardType(.decimalPad)
@@ -133,11 +133,11 @@ struct TaskEditorView: View {
                                 .foregroundColor(.secondary)
                         }
 
-                        Toggle("Set Goal", isOn: $hasGoal)
+                        Toggle(loc("Set Goal"), isOn: $hasGoal)
 
                         if hasGoal {
                             HStack {
-                                Text("Goal")
+                                Text(loc("Goal"))
                                 Spacer()
                                 TextField("0", text: $goalValue)
                                     .keyboardType(.decimalPad)
@@ -149,39 +149,39 @@ struct TaskEditorView: View {
                             }
                         }
                     } header: {
-                        Text("Targets")
+                        Text(loc("Targets"))
                     } footer: {
-                        Text(footerText)
+                        Text(loc(footerText))
                     }
                 }
 
                 // App Integration section
                 if selectedType == .time && healthKitManager.isHealthKitAvailable {
                     Section {
-                        Toggle("Fitness (HealthKit)", isOn: $useHealthKit)
+                        Toggle(loc("Fitness (HealthKit)"), isOn: $useHealthKit)
 
                         if useHealthKit {
-                            Picker("Workout Type", selection: $selectedWorkoutType) {
-                                Text("Exercise Minutes (Ring)").tag(HealthKitManager.exerciseMinutesKey)
-                                Text("All Workouts").tag("None")
+                            Picker(loc("Workout Type"), selection: $selectedWorkoutType) {
+                                Text(loc("Exercise Minutes (Ring)")).tag(HealthKitManager.exerciseMinutesKey)
+                                Text(loc("All Workouts")).tag("None")
                                 ForEach(healthKitManager.availableWorkoutTypes, id: \.name) { workout in
                                     Text(workout.name).tag(workout.name)
                                 }
                             }
                         }
                     } header: {
-                        Text("App Integration")
+                        Text(loc("App Integration"))
                     } footer: {
-                        Text("Automatically sync workout data from other fitness apps. You'll be asked for permission on first use.")
+                        Text(loc("Automatically sync workout data from other fitness apps. You'll be asked for permission on first use."))
                     }
                 }
 
                 Section {
-                    Text(exampleText)
+                    Text(loc(exampleText))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 } header: {
-                    Text("Example")
+                    Text(loc("Example"))
                 }
             }
             .navigationTitle(title)
@@ -196,13 +196,13 @@ struct TaskEditorView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(loc("Cancel")) {
                         dismiss()
                     }
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button(loc("Save")) {
                         save()
                     }
                     .disabled(!isValid)

@@ -35,16 +35,16 @@ struct StatsView: View {
             Group {
                 if viewModel.tasks.isEmpty {
                     ContentUnavailableView(
-                        "No Stats Yet",
+                        loc("No Stats Yet"),
                         systemImage: "chart.bar",
-                        description: Text("Add tasks and log entries to see your progress")
+                        description: Text(loc("Add tasks and log entries to see your progress"))
                     )
                 } else {
                     GeometryReader { geo in
                         VStack(spacing: 0) {
                             // Title row with pagination arrows
                             HStack(alignment: .firstTextBaseline) {
-                                Text("Stats")
+                                Text(loc("Stats"))
                                     .font(.title2)
                                     .fontWeight(.bold)
 
@@ -148,21 +148,21 @@ struct StatsTaskCard: View {
                 QuickStatItem(
                     icon: "arrow.up.circle.fill",
                     value: "\(task.comebackCount())",
-                    label: "Comeback",
+                    label: loc("Comeback"),
                     color: .green
                 )
 
                 QuickStatItem(
                     icon: "percent",
                     value: viewModel.getResilienceIndex(for: task).map { Formatting.formatPercentage($0) } ?? "—",
-                    label: "Resilience",
+                    label: loc("Resilience"),
                     color: .blue
                 )
 
                 QuickStatItem(
                     icon: "flame.fill",
                     value: "\(task.currentStreak())",
-                    label: "Streak",
+                    label: loc("Streak"),
                     color: .orange
                 )
             }
@@ -185,7 +185,7 @@ struct DayScoreCard: View {
                     .font(.system(size: 18))
                     .foregroundColor(.yellow)
 
-                Text("Day Score")
+                Text(loc("Day Score"))
                     .font(.body)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -201,21 +201,21 @@ struct DayScoreCard: View {
                 QuickStatItem(
                     icon: "arrow.up.circle.fill",
                     value: "\(viewModel.dayScoreComebackCount())",
-                    label: "Comeback",
+                    label: loc("Comeback"),
                     color: .green
                 )
 
                 QuickStatItem(
                     icon: "percent",
                     value: viewModel.dayScoreResilienceIndex().map { Formatting.formatPercentage($0) } ?? "—",
-                    label: "Resilience",
+                    label: loc("Resilience"),
                     color: .blue
                 )
 
                 QuickStatItem(
                     icon: "flame.fill",
                     value: "\(viewModel.dayScoreCurrentStreak())",
-                    label: "Streak",
+                    label: loc("Streak"),
                     color: .orange
                 )
             }
@@ -268,25 +268,25 @@ struct StatsCardsView: View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
                 StatCard(
-                    title: "Current Streak",
+                    title: loc("Current Streak"),
                     value: "\(task.currentStreak())",
-                    subtitle: "days",
+                    subtitle: loc("days"),
                     color: .orange,
                     icon: "flame.fill"
                 )
 
                 StatCard(
-                    title: "Longest Streak",
+                    title: loc("Longest Streak"),
                     value: "\(task.longestStreak())",
-                    subtitle: "days",
+                    subtitle: loc("days"),
                     color: .purple,
                     icon: "star.fill"
                 )
 
                 StatCard(
-                    title: "Comebacks",
+                    title: loc("Comebacks"),
                     value: "\(task.comebackCount())",
-                    subtitle: "times",
+                    subtitle: loc("times"),
                     color: .green,
                     icon: "arrow.up.circle.fill"
                 )
@@ -294,25 +294,25 @@ struct StatsCardsView: View {
 
             HStack(spacing: 12) {
                 StatCard(
-                    title: "7-Day Rate",
+                    title: loc("7-Day Rate"),
                     value: Formatting.formatPercentage(viewModel.getCompletionRate(for: task, days: 7)),
-                    subtitle: "complete",
+                    subtitle: loc("complete"),
                     color: .blue,
                     icon: "chart.line.uptrend.xyaxis"
                 )
 
                 StatCard(
-                    title: "30-Day Rate",
+                    title: loc("30-Day Rate"),
                     value: Formatting.formatPercentage(viewModel.getCompletionRate(for: task, days: 30)),
-                    subtitle: "complete",
+                    subtitle: loc("complete"),
                     color: .cyan,
                     icon: "chart.bar.fill"
                 )
 
                 StatCard(
-                    title: "90-Day Rate",
+                    title: loc("90-Day Rate"),
                     value: Formatting.formatPercentage(viewModel.getCompletionRate(for: task, days: 90)),
-                    subtitle: "complete",
+                    subtitle: loc("complete"),
                     color: .indigo,
                     icon: "chart.xyaxis.line"
                 )
@@ -363,7 +363,7 @@ struct WeekChartView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Last 7 Days")
+            Text(loc("Last 7 Days"))
                 .font(.headline)
                 .padding(.horizontal)
 

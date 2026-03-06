@@ -35,9 +35,9 @@ struct TasksListView: View {
                 if viewModel.tasks.isEmpty {
                     VStack(spacing: 16) {
                         ContentUnavailableView(
-                            "No Tasks",
+                            loc("No Tasks"),
                             systemImage: "checklist",
-                            description: Text("Add your first task to get started")
+                            description: Text(loc("Add your first task to get started"))
                         )
 
                         Button {
@@ -47,7 +47,7 @@ struct TasksListView: View {
                                 NotificationCenter.default.post(name: .refreshBadge, object: nil)
                             }
                         } label: {
-                            Label("Try with Sample Data", systemImage: "sparkles")
+                            Label(loc("Try with Sample Data"), systemImage: "sparkles")
                         }
                         .buttonStyle(.bordered)
                         .tint(.blue)
@@ -57,7 +57,7 @@ struct TasksListView: View {
                         VStack(spacing: 0) {
                             // Title row with Reorder, pagination, and Add
                             HStack(alignment: .firstTextBaseline) {
-                                Text("Tasks")
+                                Text(loc("Tasks"))
                                     .font(.title2)
                                     .fontWeight(.bold)
 
@@ -66,7 +66,7 @@ struct TasksListView: View {
                                 Button {
                                     viewModel.showingReorder = true
                                 } label: {
-                                    Text("Reorder")
+                                    Text(loc("Reorder"))
                                         .font(.subheadline)
                                 }
                                 .disabled(viewModel.tasks.isEmpty)
@@ -191,14 +191,14 @@ struct TasksListView: View {
                     viewModel.reorderTasks(reorderedTasks)
                 }
             }
-            .alert("Delete Task", isPresented: Binding(
+            .alert(loc("Delete Task"), isPresented: Binding(
                 get: { taskToDelete != nil },
                 set: { if !$0 { taskToDelete = nil } }
             )) {
-                Button("Cancel", role: .cancel) {
+                Button(loc("Cancel"), role: .cancel) {
                     taskToDelete = nil
                 }
-                Button("Delete", role: .destructive) {
+                Button(loc("Delete"), role: .destructive) {
                     if let task = taskToDelete {
                         viewModel.deleteTask(task)
                         taskToDelete = nil
@@ -233,14 +233,14 @@ struct TaskRow: View {
                         .fontWeight(.semibold)
 
                     HStack(spacing: 6) {
-                        Text("Min: \(Formatting.formatValue(task.minimumValue, for: task.taskType, unit: task.unit))")
+                        Text(loc("Min:") + " " + Formatting.formatValue(task.minimumValue, for: task.taskType, unit: task.unit))
                             .font(.caption)
                             .foregroundColor(.secondary)
 
                         if let goal = task.goalValue {
                             Text("·")
                                 .foregroundColor(.secondary)
-                            Text("Goal: \(Formatting.formatValue(goal, for: task.taskType, unit: task.unit))")
+                            Text(loc("Goal:") + " " + Formatting.formatValue(goal, for: task.taskType, unit: task.unit))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

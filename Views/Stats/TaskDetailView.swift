@@ -19,23 +19,23 @@ struct TaskDetailView: View {
             VStack(spacing: 24) {
                 // Key Stats
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Statistics")
+                    Text(loc("Statistics"))
                         .font(.headline)
                         .padding(.horizontal)
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "Non-Zero Days",
+                            title: loc("Non-Zero Days"),
                             value: "\(task.totalNonZeroDays())",
-                            subtitle: "total",
+                            subtitle: loc("total"),
                             icon: "checkmark.seal.fill",
                             color: .mint
                         )
 
                         DetailStatCard(
-                            title: "Comeback",
+                            title: loc("Comeback"),
                             value: "\(task.comebackCount())",
-                            subtitle: "times",
+                            subtitle: loc("times"),
                             icon: "arrow.up.circle.fill",
                             color: .green
                         )
@@ -44,16 +44,16 @@ struct TaskDetailView: View {
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "Resilience Index",
+                            title: loc("Resilience Index"),
                             value: viewModel.getResilienceIndex(for: task).map { Formatting.formatPercentage($0) } ?? "—",
                             icon: "percent",
                             color: .blue
                         )
 
                         DetailStatCard(
-                            title: "Days to Return",
+                            title: loc("Days to Return"),
                             value: "\(viewModel.getDaysReturnedAfterMiss(for: task))",
-                            subtitle: "days",
+                            subtitle: loc("days"),
                             icon: "arrow.uturn.up.circle.fill",
                             color: .cyan
                         )
@@ -62,17 +62,17 @@ struct TaskDetailView: View {
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "Current Streak",
+                            title: loc("Current Streak"),
                             value: "\(task.currentStreak())",
-                            subtitle: "days",
+                            subtitle: loc("days"),
                             icon: "flame.fill",
                             color: .orange
                         )
 
                         DetailStatCard(
-                            title: "Best Streak",
+                            title: loc("Best Streak"),
                             value: "\(task.longestStreak())",
-                            subtitle: "days",
+                            subtitle: loc("days"),
                             icon: "star.fill",
                             color: .purple
                         )
@@ -80,28 +80,28 @@ struct TaskDetailView: View {
                     .padding(.horizontal)
 
                     // Completion Rates
-                    Text("Completion Rates")
+                    Text(loc("Completion Rates"))
                         .font(.headline)
                         .padding(.horizontal)
                         .padding(.top, 8)
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "7 Days",
+                            title: loc("7 Days"),
                             value: Formatting.formatPercentage(viewModel.getCompletionRate(for: task, days: 7)),
                             icon: "calendar",
                             color: .blue
                         )
 
                         DetailStatCard(
-                            title: "30 Days",
+                            title: loc("30 Days"),
                             value: Formatting.formatPercentage(viewModel.getCompletionRate(for: task, days: 30)),
                             icon: "calendar",
                             color: .cyan
                         )
 
                         DetailStatCard(
-                            title: "90 Days",
+                            title: loc("90 Days"),
                             value: Formatting.formatPercentage(viewModel.getCompletionRate(for: task, days: 90)),
                             icon: "calendar",
                             color: .indigo
@@ -120,7 +120,7 @@ struct TaskDetailView: View {
                 // Recent Entries
                 if !recentEntries.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Recent Entries")
+                        Text(loc("Recent Entries"))
                             .font(.headline)
                             .padding(.horizontal)
 
@@ -235,23 +235,23 @@ struct DayScoreDetailView: View {
             VStack(spacing: 24) {
                 // Key Stats
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Statistics")
+                    Text(loc("Statistics"))
                         .font(.headline)
                         .padding(.horizontal)
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "Non-Zero Days",
+                            title: loc("Non-Zero Days"),
                             value: "\(viewModel.dayScoreTotalNonZeroDays())",
-                            subtitle: "total",
+                            subtitle: loc("total"),
                             icon: "checkmark.seal.fill",
                             color: .mint
                         )
 
                         DetailStatCard(
-                            title: "Comeback",
+                            title: loc("Comeback"),
                             value: "\(viewModel.dayScoreComebackCount())",
-                            subtitle: "times",
+                            subtitle: loc("times"),
                             icon: "arrow.up.circle.fill",
                             color: .green
                         )
@@ -260,16 +260,16 @@ struct DayScoreDetailView: View {
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "Resilience Index",
+                            title: loc("Resilience Index"),
                             value: viewModel.dayScoreResilienceIndex().map { Formatting.formatPercentage($0) } ?? "—",
                             icon: "percent",
                             color: .blue
                         )
 
                         DetailStatCard(
-                            title: "Days to Return",
+                            title: loc("Days to Return"),
                             value: "\(viewModel.dayScoreDaysReturnedAfterMiss())",
-                            subtitle: "days",
+                            subtitle: loc("days"),
                             icon: "arrow.uturn.up.circle.fill",
                             color: .cyan
                         )
@@ -278,17 +278,17 @@ struct DayScoreDetailView: View {
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "Current Streak",
+                            title: loc("Current Streak"),
                             value: "\(viewModel.dayScoreCurrentStreak())",
-                            subtitle: "days",
+                            subtitle: loc("days"),
                             icon: "flame.fill",
                             color: .orange
                         )
 
                         DetailStatCard(
-                            title: "Best Streak",
+                            title: loc("Best Streak"),
                             value: "\(viewModel.dayScoreLongestStreak())",
-                            subtitle: "days",
+                            subtitle: loc("days"),
                             icon: "star.fill",
                             color: .purple
                         )
@@ -296,28 +296,28 @@ struct DayScoreDetailView: View {
                     .padding(.horizontal)
 
                     // Completion Rates
-                    Text("Completion Rates")
+                    Text(loc("Completion Rates"))
                         .font(.headline)
                         .padding(.horizontal)
                         .padding(.top, 8)
 
                     HStack(spacing: 12) {
                         DetailStatCard(
-                            title: "7 Days",
+                            title: loc("7 Days"),
                             value: Formatting.formatPercentage(viewModel.dayScoreCompletionRate(days: 7)),
                             icon: "calendar",
                             color: .blue
                         )
 
                         DetailStatCard(
-                            title: "30 Days",
+                            title: loc("30 Days"),
                             value: Formatting.formatPercentage(viewModel.dayScoreCompletionRate(days: 30)),
                             icon: "calendar",
                             color: .cyan
                         )
 
                         DetailStatCard(
-                            title: "90 Days",
+                            title: loc("90 Days"),
                             value: Formatting.formatPercentage(viewModel.dayScoreCompletionRate(days: 90)),
                             icon: "calendar",
                             color: .indigo
@@ -339,7 +339,7 @@ struct DayScoreDetailView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "trophy.fill")
                         .foregroundColor(.yellow)
-                    Text("Day Score")
+                    Text(loc("Day Score"))
                         .font(.headline)
                         .fontWeight(.semibold)
                 }

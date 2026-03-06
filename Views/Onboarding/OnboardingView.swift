@@ -9,23 +9,25 @@ struct OnboardingView: View {
         return "v\(version).\(build)"
     }
 
-    private let features: [(icon: String, color: Color, title: String, description: String)] = [
-        ("checkmark.circle.fill", .green, "Track Your Way", "Boolean, count, or timed tasks — whatever fits your habit"),
-        ("flame.fill", .orange, "Build Momentum", "Stay consistent day by day and build momentum"),
-        ("chart.bar.fill", .blue, "See Your Progress", "Stats, heatmaps, and comeback tracking at a glance"),
-        ("heart.fill", .pink, "Stay Connected", "Sync with HealthKit and the Fitness app automatically")
-    ]
+    private var features: [(icon: String, color: Color, title: String, description: String)] {
+        [
+            ("checkmark.circle.fill", .green, loc("Track Your Way"), loc("Boolean, count, or timed tasks — whatever fits your habit")),
+            ("flame.fill", .orange, loc("Build Momentum"), loc("Stay consistent day by day and build momentum")),
+            ("chart.bar.fill", .blue, loc("See Your Progress"), loc("Stats, heatmaps, and comeback tracking at a glance")),
+            ("heart.fill", .pink, loc("Stay Connected"), loc("Sync with HealthKit and the Fitness app automatically"))
+        ]
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
 
             VStack(spacing: 8) {
-                Text("NonZero")
+                Text(loc("NonZero"))
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
-                Text("Make every day count")
+                Text(loc("Make every day count"))
                     .font(.title3)
                     .foregroundColor(.secondary)
 
@@ -70,7 +72,7 @@ struct OnboardingView: View {
                 Button {
                     onComplete()
                 } label: {
-                    Text("Get Started")
+                    Text(loc("Get Started"))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -85,7 +87,7 @@ struct OnboardingView: View {
                     }
                     onComplete()
                 } label: {
-                    Text("Try with Sample Data")
+                    Text(loc("Try with Sample Data"))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)

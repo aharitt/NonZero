@@ -6,6 +6,9 @@ struct NonZeroApp: App {
     let modelContainer: ModelContainer
 
     init() {
+        // Initialize language manager early so all Text() calls use correct language
+        _ = LanguageManager.shared
+
         do {
             // Use migration plan for schema versioning
             let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: false)
@@ -32,6 +35,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var hasInitialized = false
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @State private var contentID = UUID()
 
     var body: some View {
         Group {
@@ -45,11 +49,15 @@ struct ContentView: View {
                 mainTabView
             }
         }
+        .id(contentID)
         .onAppear {
             if !hasInitialized {
                 initializeDataStore()
                 hasInitialized = true
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .appLanguageChanged)) { _ in
+            contentID = UUID()
         }
     }
 
@@ -58,22 +66,22 @@ struct ContentView: View {
         TabView {
             TodayView()
                 .tabItem {
-                    Label("Today", systemImage: "calendar")
+                    Label(loc("Today"), systemImage: "calendar")
                 }
 
             TasksListView()
                 .tabItem {
-                    Label("Tasks", systemImage: "checklist")
+                    Label(loc("Tasks"), systemImage: "checklist")
                 }
 
             StatsView()
                 .tabItem {
-                    Label("Stats", systemImage: "chart.bar.fill")
+                    Label(loc("Stats"), systemImage: "chart.bar.fill")
                 }
 
             SettingsView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label(loc("Settings"), systemImage: "gear")
                 }
         }
         .onAppear {
