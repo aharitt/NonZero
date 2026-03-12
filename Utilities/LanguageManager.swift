@@ -65,7 +65,7 @@ private let koreanTranslations: [String: String] = [
     "Today is Non-Zero": "오늘은 논제로!",
     "Make Today Non-Zero": "오늘을 논제로로 만드세요",
     "Did It!": "완료!",
-    "Done": "완료 표시",
+    "Mark Done": "완료 표시",
     "Stop": "정지",
 
     // Tasks list
@@ -252,7 +252,7 @@ private let spanishTranslations: [String: String] = [
     "Today is Non-Zero": "¡Hoy es Non-Zero!",
     "Make Today Non-Zero": "Haz que hoy sea Non-Zero",
     "Did It!": "¡Hecho!",
-    "Done": "Listo",
+    "Mark Done": "Marcar listo",
     "Stop": "Detener",
 
     // Tasks list

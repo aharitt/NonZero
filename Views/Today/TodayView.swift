@@ -213,7 +213,7 @@ struct TodayTaskCard: View {
             Button {
                 onQuickAction(1)
             } label: {
-                Label(loc("Done"), systemImage: "checkmark.circle")
+                Label(loc("Mark Done"), systemImage: "checkmark.circle")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)

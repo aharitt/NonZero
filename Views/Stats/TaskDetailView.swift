@@ -109,7 +109,6 @@ struct TaskDetailView: View {
                     }
                     .padding(.horizontal)
                 }
-                .id(refreshID)
 
                 // Calendar Heatmap
                 CalendarHeatmapView(task: task, days: 60, onEntryChanged: {
@@ -133,6 +132,7 @@ struct TaskDetailView: View {
                     }
                 }
             }
+            .id(refreshID)
             .padding(.vertical)
         }
         .background(Color(.systemGroupedBackground))

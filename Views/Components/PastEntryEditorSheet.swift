@@ -11,6 +11,7 @@ struct PastEntryEditorSheet: View {
     @State private var value: String = ""
     @State private var note: String = ""
     @State private var boolValue: Bool = false
+    @FocusState private var valueFieldFocused: Bool
 
     init(task: Task, date: Date, entry: Entry?, onSave: @escaping (Double, String?) -> Void) {
         self.task = task
@@ -84,6 +85,7 @@ struct PastEntryEditorSheet: View {
                                 .keyboardType(.numberPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 100)
+                                .focused($valueFieldFocused)
                         }
 
                     case .time:
@@ -94,6 +96,7 @@ struct PastEntryEditorSheet: View {
                                 .keyboardType(.numberPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 100)
+                                .focused($valueFieldFocused)
                         }
                     }
 
@@ -142,6 +145,13 @@ struct PastEntryEditorSheet: View {
             }
             .navigationTitle("Edit Entry")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                guard task.taskType != .boolean else { return }
+                valueFieldFocused = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
