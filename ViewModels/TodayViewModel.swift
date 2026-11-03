@@ -8,6 +8,7 @@ class TodayViewModel {
     var todayEntries: [UUID: Entry] = [:]
     var selectedTask: Task?
     var showingEntryEditor = false
+    var syncResultMessage: String? = nil
 
     private let dataStore = DataStore.shared
     private let timerManager = TimerManager.shared
@@ -287,48 +288,46 @@ class TodayViewModel {
     func syncHealthKitData() async {
         let healthKitManager = HealthKitManager.shared
 
-        // Request authorization if not already authorized
-        if !healthKitManager.isAuthorized {
-            do {
-                try await healthKitManager.requestAuthorization()
-            } catch {
-                print("HealthKit authorization failed: \(error)")
-                return
-            }
+        // Always re-request authorization — HealthKit won't show the dialog again
+        // if already granted, but this ensures permissions are fresh after reinstall.
+        do {
+            try await healthKitManager.requestAuthorization()
+        } catch {
+            syncResultMessage = "Authorization failed: \(error.localizedDescription)"
+            return
         }
 
-        // Sync data for tasks with HealthKit integration (only time tasks support HealthKit)
-        for task in tasks where task.taskType == .time && task.healthKitWorkoutType != nil {
-            do {
-                let healthKitType = task.healthKitWorkoutType!
-                print("📊 Syncing HealthKit for task: \(task.name), type: \(healthKitType)")
+        let hkTasks = tasks.filter { $0.taskType == .time && $0.healthKitWorkoutType != nil }
 
+        guard !hkTasks.isEmpty else {
+            syncResultMessage = "No tasks have HealthKit enabled. Edit a time task to enable it."
+            return
+        }
+
+        var lines: [String] = []
+
+        for task in hkTasks {
+            let healthKitType = task.healthKitWorkoutType!
+            do {
                 let minutes = try await healthKitManager.fetchMinutes(for: today, healthKitType: healthKitType)
-                print("📊 Found \(minutes) minutes from HealthKit")
+                lines.append(task.name + ": type=" + healthKitType + ", found=" + String(Int(minutes)) + "m")
 
                 if minutes > 0 {
-                    // Update or create entry with HealthKit data
                     if let existingEntry = getEntry(for: task) {
-                        // Only update if HealthKit has more time
                         if minutes > existingEntry.value {
-                            print("📊 Updating existing entry from \(existingEntry.value) to \(minutes) minutes")
                             dataStore.updateEntry(existingEntry, value: minutes, note: "Synced from Fitness app")
-                        } else {
-                            print("📊 Existing entry (\(existingEntry.value) min) already >= HealthKit (\(minutes) min)")
                         }
                     } else {
-                        print("📊 Creating new entry with \(minutes) minutes")
                         let entry = Entry(task: task, date: today, value: minutes, note: "Synced from Fitness app")
                         dataStore.addEntry(entry)
                     }
-                } else {
-                    print("📊 No workout data found for today")
                 }
             } catch {
-                print("❌ Failed to sync HealthKit data for \(task.name): \(error)")
+                lines.append("\(task.name): ERROR \(error.localizedDescription)")
             }
         }
 
+        syncResultMessage = lines.joined(separator: "\n")
         loadData()
     }
 }

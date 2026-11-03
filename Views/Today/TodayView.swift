@@ -7,8 +7,9 @@ struct TodayView: View {
     @State private var viewModel = TodayViewModel()
     @State private var timerManager = TimerManager.shared
     @State private var currentPage = 0
-    @State private var tasksPerPage = 6
-    private let estimatedCardHeight: CGFloat = 100
+    private let layout = LayoutManager.shared
+
+    var tasksPerPage: Int { layout.tasksPerPage }
 
     var totalPages: Int {
         max(1, (viewModel.tasks.count + tasksPerPage - 1) / tasksPerPage)
@@ -19,18 +20,6 @@ struct TodayView: View {
         let end = min(start + tasksPerPage, viewModel.tasks.count)
         guard start < viewModel.tasks.count else { return [] }
         return Array(viewModel.tasks[start..<end])
-    }
-
-    private func calculateTasksPerPage(height: CGFloat) {
-        // GeometryReader height already excludes nav bar and tab bar
-        // Reserve space for: title row (~48) + padding (~16)
-        let reserved: CGFloat = 64
-        let available = height - reserved
-        let count = max(1, Int(available / estimatedCardHeight))
-        if count != tasksPerPage {
-            tasksPerPage = count
-            currentPage = min(currentPage, max(0, totalPages - 1))
-        }
     }
 
     var body: some View {
@@ -122,9 +111,9 @@ struct TodayView: View {
                             }
                             .tabViewStyle(.page(indexDisplayMode: .never))
                         }
-                        .onAppear { calculateTasksPerPage(height: geo.size.height) }
+                        .onAppear { layout.update(availableHeight: geo.size.height) }
                         .onChange(of: geo.size.height) { _, newHeight in
-                            calculateTasksPerPage(height: newHeight)
+                            layout.update(availableHeight: newHeight)
                         }
                     }
                     .background(Color(.systemGroupedBackground))
@@ -136,6 +125,14 @@ struct TodayView: View {
             }
             .refreshable {
                 await viewModel.syncHealthKitData()
+            }
+            .alert("HealthKit Sync Result", isPresented: Binding(
+                get: { viewModel.syncResultMessage != nil },
+                set: { if !$0 { viewModel.syncResultMessage = nil } }
+            )) {
+                Button("OK") { viewModel.syncResultMessage = nil }
+            } message: {
+                Text(viewModel.syncResultMessage ?? "")
             }
             .sheet(isPresented: $viewModel.showingEntryEditor) {
                 if let task = viewModel.selectedTask {
@@ -286,15 +283,13 @@ struct TodayTaskCard: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             headerRow
 
-            if let suggestion = suggestion {
-                Text(suggestion)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
+            Text(suggestion ?? "")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 6) {
                 switch task.taskType {
@@ -315,6 +310,7 @@ struct TodayTaskCard: View {
             }
         }
         .padding(12)
+        .frame(height: LayoutManager.cardHeight)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.secondarySystemGroupedBackground))

@@ -147,43 +147,31 @@ final class Task {
         return entries.count
     }
 
-    /// Number of times user came back after a zero day
-    /// A comeback = any non-zero day that follows a zero day (or gap)
+    /// Number of times user came back after a break (zero entry or missed day).
+    /// A comeback = any non-zero day that doesn't immediately follow another non-zero day.
     func comebackCount() -> Int {
         let calendar = Calendar.current
+
+        // Only care about non-zero days, in chronological order
+        let nonZeroDates = entries
+            .filter { $0.isNonZero }
+            .map { $0.date }
+            .sorted()
+
+        guard !nonZeroDates.isEmpty else { return 0 }
+
         var comebacks = 0
+        var previousDate: Date? = nil
 
-        // Sort entries by date
-        let sortedEntries = entries.sorted { $0.date < $1.date }
-        guard !sortedEntries.isEmpty else { return 0 }
-
-        var previousWasZero = false
-
-        for entry in sortedEntries {
-            if entry.isNonZero && previousWasZero {
-                // Current day is non-zero and previous day was zero = comeback!
-                comebacks += 1
-                previousWasZero = false
-            } else if !entry.isNonZero {
-                // Current day is zero
-                previousWasZero = true
-            } else {
-                // Current day is non-zero, previous was also non-zero
-                previousWasZero = false
-            }
-        }
-
-        // Also check for comebacks after gaps (missing days)
-        var previousDate: Date?
-        for entry in sortedEntries where entry.isNonZero {
-            if let prevDate = previousDate {
-                let daysDiff = calendar.dateComponents([.day], from: prevDate, to: entry.date).day ?? 0
-                // If there's a gap of more than 1 day, count it as a comeback
+        for date in nonZeroDates {
+            if let prev = previousDate {
+                let daysDiff = calendar.dateComponents([.day], from: prev, to: date).day ?? 0
+                // Any gap > 1 day (whether a zero entry or a missing day) is a comeback
                 if daysDiff > 1 {
                     comebacks += 1
                 }
             }
-            previousDate = entry.date
+            previousDate = date
         }
 
         return comebacks

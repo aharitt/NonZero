@@ -44,7 +44,10 @@ class HealthKitManager: ObservableObject {
             throw HealthKitError.notAvailable
         }
 
-        var typesToRead: Set<HKObjectType> = [HKObjectType.workoutType()]
+        var typesToRead: Set<HKObjectType> = [
+            HKObjectType.workoutType(),
+            HKObjectType.activitySummaryType()
+        ]
         if let exerciseTimeType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime) {
             typesToRead.insert(exerciseTimeType)
         }
@@ -66,44 +69,63 @@ class HealthKitManager: ObservableObject {
         }
     }
 
-    // Fetch Exercise Ring minutes (appleExerciseTime) for a specific date
+    // Fetch Exercise Ring minutes (appleExerciseTime) for a specific date.
+    // Tries HKStatisticsQuery first; falls back to HKActivitySummaryQuery
+    // which is more reliable on iOS 17+ for Apple Watch exercise ring data.
     func fetchExerciseRingMinutes(for date: Date) async throws -> Double {
         guard isHealthKitAvailable else {
             throw HealthKitError.notAvailable
-        }
-
-        guard let exerciseTimeType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime) else {
-            throw HealthKitError.fetchFailed
         }
 
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
 
-        let predicate = HKQuery.predicateForSamples(
-            withStart: startOfDay,
-            end: endOfDay,
-            options: .strictStartDate
-        )
+        // Primary: HKStatisticsQuery on appleExerciseTime
+        if let exerciseTimeType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime) {
+            let predicate = HKQuery.predicateForSamples(
+                withStart: startOfDay,
+                end: endOfDay,
+                options: .strictStartDate
+            )
 
-        return try await withCheckedThrowingContinuation { continuation in
-            let query = HKStatisticsQuery(
-                quantityType: exerciseTimeType,
-                quantitySamplePredicate: predicate,
-                options: .cumulativeSum
-            ) { _, statistics, error in
-                if let error = error {
-                    print("🏃 Exercise ring query error: \(error)")
-                    continuation.resume(throwing: error)
-                    return
+            let minutes: Double = try await withCheckedThrowingContinuation { continuation in
+                let query = HKStatisticsQuery(
+                    quantityType: exerciseTimeType,
+                    quantitySamplePredicate: predicate,
+                    options: .cumulativeSum
+                ) { _, statistics, error in
+                    if let error = error {
+                        print("🏃 Exercise ring statistics query error: \(error)")
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    let value = statistics?.sumQuantity()?.doubleValue(for: .minute()) ?? 0.0
+                    print("🏃 Exercise ring (statistics): \(value) min")
+                    continuation.resume(returning: value)
                 }
-
-                let minutes = statistics?.sumQuantity()?.doubleValue(for: .minute()) ?? 0.0
-                print("🏃 Exercise ring minutes: \(minutes)")
-                continuation.resume(returning: minutes)
+                healthStore.execute(query)
             }
 
-            healthStore.execute(query)
+            if minutes > 0 { return minutes }
+        }
+
+        // Fallback: HKActivitySummaryQuery — more reliable for Apple Watch ring data
+        let components = calendar.dateComponents([.day, .month, .year, .era], from: date)
+        let predicate = HKQuery.predicate(forActivitySummariesBetweenStart: components, end: components)
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKActivitySummaryQuery(predicate: predicate) { _, summaries, error in
+                if let error = error {
+                    print("🏃 Activity summary query error: \(error)")
+                    continuation.resume(returning: 0.0)
+                    return
+                }
+                let minutes = summaries?.first?.appleExerciseTime.doubleValue(for: .minute()) ?? 0.0
+                print("🏃 Exercise ring (activity summary): \(minutes) min")
+                continuation.resume(returning: minutes)
+            }
+            self.healthStore.execute(query)
         }
     }
 

@@ -4,30 +4,24 @@ import Charts
 struct StatsView: View {
     @State private var viewModel = StatsViewModel()
     @State private var currentPage = 0
-    @State private var tasksPerPage = 6
-    private let estimatedCardHeight: CGFloat = 120
+    private let layout = LayoutManager.shared
+
+    var tasksPerPage: Int { layout.tasksPerPage }
+    // Page 0 has one slot taken by DayScoreCard
+    var firstPageCapacity: Int { max(1, tasksPerPage - 1) }
 
     var totalPages: Int {
-        max(1, (viewModel.tasks.count + tasksPerPage - 1) / tasksPerPage)
+        let count = viewModel.tasks.count
+        guard count > firstPageCapacity else { return 1 }
+        return 1 + ((count - firstPageCapacity) + tasksPerPage - 1) / tasksPerPage
     }
 
     func tasksForPage(_ page: Int) -> [Task] {
-        let start = page * tasksPerPage
-        let end = min(start + tasksPerPage, viewModel.tasks.count)
-        guard start < viewModel.tasks.count else { return [] }
+        let count = viewModel.tasks.count
+        let start = page == 0 ? 0 : firstPageCapacity + (page - 1) * tasksPerPage
+        let end = min(start + (page == 0 ? firstPageCapacity : tasksPerPage), count)
+        guard start < count else { return [] }
         return Array(viewModel.tasks[start..<end])
-    }
-
-    private func calculateTasksPerPage(height: CGFloat) {
-        // GeometryReader height already excludes nav bar and tab bar
-        // Reserve space for: title row (~48) + padding (~16)
-        let reserved: CGFloat = 64
-        let available = height - reserved
-        let count = max(1, Int(available / estimatedCardHeight))
-        if count != tasksPerPage {
-            tasksPerPage = count
-            currentPage = min(currentPage, max(0, totalPages - 1))
-        }
     }
 
     var body: some View {
@@ -107,10 +101,6 @@ struct StatsView: View {
                             }
                             .tabViewStyle(.page(indexDisplayMode: .never))
                         }
-                        .onAppear { calculateTasksPerPage(height: geo.size.height) }
-                        .onChange(of: geo.size.height) { _, newHeight in
-                            calculateTasksPerPage(height: newHeight)
-                        }
                     }
                     .background(Color(.systemGroupedBackground))
                 }
@@ -128,7 +118,7 @@ struct StatsTaskCard: View {
     let task: Task
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             HStack(spacing: 8) {
                 TaskTypeIcon(taskType: task.taskType, size: 18)
 
@@ -168,6 +158,7 @@ struct StatsTaskCard: View {
             }
         }
         .padding(12)
+        .frame(height: LayoutManager.cardHeight)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.secondarySystemGroupedBackground))
@@ -179,7 +170,7 @@ struct DayScoreCard: View {
     let viewModel: StatsViewModel
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             HStack(spacing: 8) {
                 Image(systemName: "trophy.fill")
                     .font(.system(size: 18))
@@ -221,6 +212,7 @@ struct DayScoreCard: View {
             }
         }
         .padding(12)
+        .frame(height: LayoutManager.cardHeight)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.secondarySystemGroupedBackground))
@@ -242,7 +234,7 @@ struct QuickStatItem: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(value)
-                    .font(.callout)
+                    .font(.subheadline)
                     .fontWeight(.bold)
                     .fontDesign(.rounded)
                     .foregroundColor(.primary)

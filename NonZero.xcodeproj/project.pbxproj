@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA010001AABB000100CCDDEE /* FormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010002AABB000100CCDDEE /* FormattingTests.swift */; };
+		AA010003AABB000100CCDDEE /* DateHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010004AABB000100CCDDEE /* DateHelperTests.swift */; };
+		AA010005AABB000100CCDDEE /* TaskModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010006AABB000100CCDDEE /* TaskModelTests.swift */; };
+		AA010007AABB000100CCDDEE /* EntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010008AABB000100CCDDEE /* EntryTests.swift */; };
 		C10245FF2F3A890700C417EA /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10245E72F3A890600C417EA /* Task.swift */; };
 		C10246002F3A890700C417EA /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10245EC2F3A890600C417EA /* Formatting.swift */; };
 		C10246012F3A890700C417EA /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10245E22F3A890600C417EA /* DataStore.swift */; };
@@ -48,9 +52,17 @@
 		C1AFD9612F3FE4170090C36E /* TimerActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AFD9602F3FE4170090C36E /* TimerActivityAttributes.swift */; };
 		C1D392CD2F466E6E00C3C803 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D392CB2F466E6E00C3C803 /* OnboardingView.swift */; };
 		C1DE31F02F54271500CA146D /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DE31EF2F54271500CA146D /* LanguageManager.swift */; };
+		EED8D3A7F611406ABB95DFB8 /* LayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB75ECA2FA34300B214F9F7 /* LayoutManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		AA010009AABB000100CCDDEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C10245CA2F3A887600C417EA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C10245D12F3A887600C417EA;
+			remoteInfo = NonZero;
+		};
 		C15D95102F40449A00321CCE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C10245CA2F3A887600C417EA /* Project object */;
@@ -75,6 +87,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6AB75ECA2FA34300B214F9F7 /* LayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutManager.swift; sourceTree = "<group>"; };
+		AA010002AABB000100CCDDEE /* FormattingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormattingTests.swift; sourceTree = "<group>"; };
+		AA010004AABB000100CCDDEE /* DateHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelperTests.swift; sourceTree = "<group>"; };
+		AA010006AABB000100CCDDEE /* TaskModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskModelTests.swift; sourceTree = "<group>"; };
+		AA010008AABB000100CCDDEE /* EntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryTests.swift; sourceTree = "<group>"; };
+		AA01000AAABB000100CCDDEE /* NonZeroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NonZeroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10245D22F3A887600C417EA /* NonZero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NonZero.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10245E02F3A890600C417EA /* NonZeroApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonZeroApp.swift; sourceTree = "<group>"; };
 		C10245E22F3A890600C417EA /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
@@ -149,6 +167,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AA01000BAABB000100CCDDEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C10245CF2F3A887600C417EA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -189,6 +214,7 @@
 				C15D95062F40449700321CCE /* NonZeroWidgets */,
 				C1AFD9432F3FE35E0090C36E /* Frameworks */,
 				C10245D32F3A887600C417EA /* Products */,
+				C1408C292F8A2A9900749E77 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -197,6 +223,7 @@
 			children = (
 				C10245D22F3A887600C417EA /* NonZero.app */,
 				C15D95032F40449600321CCE /* NonZeroWidgetsExtension.appex */,
+				AA01000AAABB000100CCDDEE /* NonZeroTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -218,6 +245,7 @@
 				C1AFD9202F3AA80C0090C36E /* HealthKitManager.swift */,
 				C10245E22F3A890600C417EA /* DataStore.swift */,
 				C10245E32F3A890600C417EA /* SeedData.swift */,
+				6AB75ECA2FA34300B214F9F7 /* LayoutManager.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -308,6 +336,17 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		C1408C292F8A2A9900749E77 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				AA010002AABB000100CCDDEE /* FormattingTests.swift */,
+				AA010004AABB000100CCDDEE /* DateHelperTests.swift */,
+				AA010006AABB000100CCDDEE /* TaskModelTests.swift */,
+				AA010008AABB000100CCDDEE /* EntryTests.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		C1AFD92D2F3BD99B0090C36E /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -336,6 +375,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		AA01000DAABB000100CCDDEE /* NonZeroTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA010014AABB000100CCDDEE /* Build configuration list for PBXNativeTarget "NonZeroTests" */;
+			buildPhases = (
+				AA010010AABB000100CCDDEE /* Sources */,
+				AA01000BAABB000100CCDDEE /* Frameworks */,
+				AA010011AABB000100CCDDEE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA010013AABB000100CCDDEE /* PBXTargetDependency */,
+			);
+			name = NonZeroTests;
+			packageProductDependencies = (
+			);
+			productName = NonZeroTests;
+			productReference = AA01000AAABB000100CCDDEE /* NonZeroTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		C10245D12F3A887600C417EA /* NonZero */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C10245DD2F3A887900C417EA /* Build configuration list for PBXNativeTarget "NonZero" */;
@@ -389,6 +448,10 @@
 				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
+					AA01000DAABB000100CCDDEE = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = C10245D12F3A887600C417EA;
+					};
 					C10245D12F3A887600C417EA = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -413,11 +476,19 @@
 			targets = (
 				C10245D12F3A887600C417EA /* NonZero */,
 				C15D95022F40449600321CCE /* NonZeroWidgetsExtension */,
+				AA01000DAABB000100CCDDEE /* NonZeroTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		AA010011AABB000100CCDDEE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C10245D02F3A887600C417EA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -439,6 +510,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		AA010010AABB000100CCDDEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA010001AABB000100CCDDEE /* FormattingTests.swift in Sources */,
+				AA010003AABB000100CCDDEE /* DateHelperTests.swift in Sources */,
+				AA010005AABB000100CCDDEE /* TaskModelTests.swift in Sources */,
+				AA010007AABB000100CCDDEE /* EntryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C10245CE2F3A887600C417EA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -448,6 +530,7 @@
 				C1AFD9292F3B9EAA0090C36E /* IconPicker.swift in Sources */,
 				C10246002F3A890700C417EA /* Formatting.swift in Sources */,
 				C10246012F3A890700C417EA /* DataStore.swift in Sources */,
+				EED8D3A7F611406ABB95DFB8 /* LayoutManager.swift in Sources */,
 				C1AFD9212F3AA80C0090C36E /* HealthKitManager.swift in Sources */,
 				C10246022F3A890700C417EA /* NonZeroApp.swift in Sources */,
 				C1AFD93B2F3EF50F0090C36E /* DeviceHelper.swift in Sources */,
@@ -490,6 +573,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		AA010013AABB000100CCDDEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C10245D12F3A887600C417EA /* NonZero */;
+			targetProxy = AA010009AABB000100CCDDEE /* PBXContainerItemProxy */;
+		};
 		C15D95112F40449A00321CCE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C15D95022F40449600321CCE /* NonZeroWidgetsExtension */;
@@ -498,6 +586,45 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		AA010015AABB000100CCDDEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9U967G3Y83;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero.NonZeroTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NonZero.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NonZero";
+			};
+			name = Debug;
+		};
+		AA010016AABB000100CCDDEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9U967G3Y83;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nonzeroprinciple.NonZero.NonZeroTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NonZero.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NonZero";
+			};
+			name = Release;
+		};
 		C10245DB2F3A887900C417EA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -629,7 +756,7 @@
 				CODE_SIGN_ENTITLEMENTS = NonZeroDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -670,7 +797,7 @@
 				CODE_SIGN_ENTITLEMENTS = NonZero.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -711,7 +838,7 @@
 				CODE_SIGN_ENTITLEMENTS = NonZeroWidgetsExtensionDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NonZeroWidgets/Info.plist;
@@ -744,7 +871,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 9U967G3Y83;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NonZeroWidgets/Info.plist;
@@ -773,6 +900,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AA010014AABB000100CCDDEE /* Build configuration list for PBXNativeTarget "NonZeroTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA010015AABB000100CCDDEE /* Debug */,
+				AA010016AABB000100CCDDEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C10245CD2F3A887600C417EA /* Build configuration list for PBXProject "NonZero" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -65,17 +65,19 @@ class DataStore {
     func fetchEntries(for task: Task, from startDate: Date, to endDate: Date) -> [Entry] {
         guard let context = context else { return [] }
 
+        // Filter by date range in the database query, then narrow by task in memory.
+        // This avoids loading the entire Entry table — only the relevant date window.
         let descriptor = FetchDescriptor<Entry>(
+            predicate: #Predicate<Entry> { entry in
+                entry.date >= startDate && entry.date <= endDate
+            },
             sortBy: [SortDescriptor(\.date)]
         )
 
         do {
-            let allEntries = try context.fetch(descriptor)
-            return allEntries.filter { entry in
-                entry.task?.id == task.id &&
-                entry.date >= startDate &&
-                entry.date <= endDate
-            }
+            let entries = try context.fetch(descriptor)
+            let taskID = task.id
+            return entries.filter { $0.task?.id == taskID }
         } catch {
             print("Failed to fetch entries: \(error)")
             return []

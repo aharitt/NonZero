@@ -4,9 +4,10 @@ struct TasksListView: View {
     @State private var viewModel = TasksViewModel()
     @State private var taskToDelete: Task?
     @State private var currentPage = 0
-    @State private var tasksPerPage = 8
     @State private var selectedTaskId: UUID?
-    private let estimatedRowHeight: CGFloat = 75
+    private let layout = LayoutManager.shared
+
+    var tasksPerPage: Int { layout.tasksPerPage }
 
     var totalPages: Int {
         max(1, (viewModel.tasks.count + tasksPerPage - 1) / tasksPerPage)
@@ -17,16 +18,6 @@ struct TasksListView: View {
         let end = min(start + tasksPerPage, viewModel.tasks.count)
         guard start < viewModel.tasks.count else { return [] }
         return Array(viewModel.tasks[start..<end])
-    }
-
-    private func calculateTasksPerPage(height: CGFloat) {
-        let reserved: CGFloat = 64
-        let available = height - reserved
-        let count = max(1, Int(available / estimatedRowHeight))
-        if count != tasksPerPage {
-            tasksPerPage = count
-            currentPage = min(currentPage, max(0, totalPages - 1))
-        }
     }
 
     var body: some View {
@@ -144,10 +135,6 @@ struct TasksListView: View {
                             }
                             .tabViewStyle(.page(indexDisplayMode: .never))
                         }
-                        .onAppear { calculateTasksPerPage(height: geo.size.height) }
-                        .onChange(of: geo.size.height) { _, newHeight in
-                            calculateTasksPerPage(height: newHeight)
-                        }
                     }
                     .background(Color(.systemGroupedBackground))
                 }
@@ -252,6 +239,7 @@ struct TaskRow: View {
                 StreakBadge(streak: task.currentStreak())
             }
             .padding(12)
+            .frame(height: LayoutManager.cardHeight)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(.secondarySystemGroupedBackground))
@@ -267,7 +255,7 @@ struct TaskRow: View {
                             .font(.body)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
-                            .frame(width: 50, height: 56)
+                            .frame(width: 50, height: LayoutManager.cardHeight)
                             .background(Color.blue)
                     }
                     .buttonStyle(.plain)
@@ -279,7 +267,7 @@ struct TaskRow: View {
                             .font(.body)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
-                            .frame(width: 50, height: 56)
+                            .frame(width: 50, height: LayoutManager.cardHeight)
                             .background(Color.red)
                     }
                     .buttonStyle(.plain)

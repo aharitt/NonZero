@@ -70,13 +70,26 @@ class TimerManager {
         return minutes
     }
 
-    // Pause timer (accumulate time but stop counting)
+    // Pause timer (accumulate time, stop counting until resumed)
     func pauseTimer(for taskId: UUID) {
         guard runningTaskId == taskId, let start = startTime else { return }
 
         accumulatedSeconds += Date().timeIntervalSince(start)
-        startTime = Date() // Reset start time for next resume
+        startTime = nil  // nil = paused; currentElapsedSeconds returns 0
         saveState()
+    }
+
+    // Resume a paused timer
+    func resumeTimer(for taskId: UUID) {
+        guard runningTaskId == taskId, startTime == nil else { return }
+
+        startTime = Date()
+        saveState()
+    }
+
+    // Whether the timer is paused (started but not actively counting)
+    func isPaused(taskId: UUID) -> Bool {
+        return runningTaskId == taskId && startTime == nil
     }
 
     // Get elapsed minutes for a running timer
